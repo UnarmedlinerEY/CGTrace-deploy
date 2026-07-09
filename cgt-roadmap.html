@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>CGTrace — Product Vision & Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1C1540;
+  --paper: #FAF9FF;
+  --paper2: #FFFFFF;
+  --rule: #D5CFEE;
+  --rule2: #C5BFEE;
+  --dim: #7A72B0;
+  --muted: #9088C0;
+
+  --teal: #7F77DD;
+  --teal-light: #EEEDFE;
+  --teal-mid: #a78bfa;
+
+  --amber: #b85c0a;
+  --amber-light: #faebd4;
+  --amber-mid: #e88730;
+
+  --red: #c0321e;
+  --red-light: #fdeae7;
+
+  --blue: #1a5fa8;
+  --blue-light: #e4eef9;
+  --blue-mid: #4a8fd4;
+
+  --purple: #5a38b4;
+  --purple-light: #eeebfc;
+  --purple-mid: #8b6edc;
+
+  --gold: #c9911a;
+  --gold-light: #fdf3d8;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 80px 60px 64px;
+  overflow: hidden;
+}
+
+.hero-grid-lines {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+.hero-accent {
+  position: absolute;
+  top: -120px; right: -80px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(127,119,221,0.25) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.hero-accent2 {
+  position: absolute;
+  bottom: -100px; left: 30%;
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, rgba(184,92,10,0.15) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--teal-mid);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.hero-eyebrow::after {
+  content: '';
+  flex: 1;
+  max-width: 180px;
+  height: 1px;
+  background: rgba(58,171,142,0.4);
+}
+
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(64px, 9vw, 120px);
+  letter-spacing: 0.01em;
+  line-height: 0.92;
+  margin-bottom: 28px;
+}
+
+.hero-title span.accent { color: var(--teal-mid); }
+
+.hero-desc {
+  max-width: 580px;
+  font-size: 16px;
+  line-height: 1.75;
+  color: rgba(245,242,237,0.65);
+  margin-bottom: 40px;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 0;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 640px;
+}
+
+.hero-stat {
+  flex: 1;
+  padding: 18px 22px;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+.hero-stat:last-child { border-right: none; }
+
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 38px;
+  letter-spacing: 0.02em;
+  color: var(--paper);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-num span { color: var(--teal-mid); }
+
+.stat-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(245,242,237,0.45);
+  line-height: 1.4;
+}
+
+/* ── SECTIONS ── */
+.section {
+  padding: 64px 60px;
+  border-bottom: 1px solid var(--rule);
+}
+.section:last-child { border-bottom: none; }
+
+.section-dark {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.section-tint {
+  background: var(--paper2);
+}
+
+.section-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.section-label.on-dark { color: rgba(245,242,237,0.35); }
+
+.section-title {
+  font-family: 'IBM Plex Sans', serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.section-title em { font-style: italic; color: var(--dim); }
+.section-title.on-dark { color: var(--paper); }
+.section-title.on-dark em { color: rgba(245,242,237,0.45); }
+
+.section-sub {
+  font-size: 15px;
+  color: var(--dim);
+  max-width: 640px;
+  line-height: 1.7;
+  margin-bottom: 48px;
+}
+.section-sub.on-dark { color: rgba(245,242,237,0.55); }
+
+/* ── VISION PILLARS ── */
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.pillar {
+  padding: 36px 30px;
+  border-right: 1px solid var(--rule);
+  position: relative;
+  transition: background 0.2s;
+}
+.pillar:last-child { border-right: none; }
+.pillar:hover { background: var(--paper2); }
+
+.pillar-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 72px;
+  color: var(--rule);
+  line-height: 1;
+  margin-bottom: 16px;
+  letter-spacing: 0.02em;
+}
+
+.pillar-icon {
+  font-size: 28px;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.pillar-title {
+  font-family: 'IBM Plex Sans', serif;
+  font-size: 22px;
+  font-weight: 400;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.pillar-body {
+  font-size: 13.5px;
+  color: var(--dim);
+  line-height: 1.75;
+}
+
+.pillar-tag {
+  display: inline-flex;
+  margin-top: 16px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── PROBLEM / MARKET ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.three-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+.market-card {
+  padding: 28px;
+  border-radius: 10px;
+  border: 1px solid;
+  position: relative;
+  overflow: hidden;
+}
+
+.market-card-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.market-card-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  opacity: 0.6;
+}
+.market-card-body {
+  font-size: 13px;
+  line-height: 1.7;
+  opacity: 0.8;
+}
+
+/* ── ROADMAP ── */
+.roadmap-track {
+  position: relative;
+  padding-top: 24px;
+}
+
+.roadmap-spine {
+  position: absolute;
+  top: 60px; left: 20px;
+  bottom: 0; width: 2px;
+  background: linear-gradient(to bottom, var(--teal) 0%, var(--amber) 50%, var(--blue) 80%, var(--rule) 100%);
+  border-radius: 1px;
+}
+
+.roadmap-iter {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 24px;
+  margin-bottom: 28px;
+  position: relative;
+}
+
+.iter-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding-top: 4px;
+}
+
+.iter-dot {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  border: 2px solid;
+  flex-shrink: 0;
+  z-index: 1;
+  background: var(--paper);
+}
+
+.iter-card {
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.iter-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.iter-card-head {
+  padding: 18px 22px 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.iter-phase-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.iter-title {
+  font-family: 'IBM Plex Sans', serif;
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.iter-subtitle {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.iter-card-body {
+  padding: 0 22px 18px;
+  border-top: 1px solid var(--rule);
+}
+
+.req-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 14px;
+  padding-bottom: 6px;
+}
+
+.req-chip {
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 5px;
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  color: var(--dim);
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.iter-desc {
+  font-size: 13px;
+  color: var(--dim);
+  line-height: 1.7;
+  padding-top: 10px;
+}
+
+/* ── COMPETITIVE MATRIX ── */
+.comp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.comp-table th {
+  padding: 12px 16px;
+  text-align: left;
+  background: var(--ink);
+  color: rgba(245,242,237,0.55);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.comp-table th:first-child { border-radius: 8px 0 0 0; }
+.comp-table th:last-child { border-radius: 0 8px 0 0; }
+
+.comp-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--dim);
+  vertical-align: middle;
+}
+
+.comp-table td:first-child {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.comp-table tr.us-row td { background: rgba(127,119,221,0.04); }
+.comp-table tr.us-row td:first-child { color: var(--teal); }
+
+.comp-table tr:last-child td { border-bottom: none; }
+
+.check { color: var(--teal); font-size: 16px; }
+.cross { color: var(--rule2); font-size: 16px; }
+.part  { color: var(--amber); font-size: 14px; }
+
+/* ── SUCCESS METRICS ── */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.metric-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 28px;
+}
+
+.metric-phase {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.metric-items { display: flex; flex-direction: column; gap: 10px; }
+
+.metric-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.metric-bullet {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.metric-text { font-size: 13px; line-height: 1.65; color: rgba(245,242,237,0.65); }
+.metric-text strong { color: var(--paper); font-weight: 500; }
+
+/* ── DATA STRATEGY ── */
+.data-phases {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.data-phase {
+  padding: 28px 24px;
+  border-right: 1px solid var(--rule);
+  position: relative;
+}
+.data-phase:last-child { border-right: none; }
+
+.data-phase-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 12px;
+  color: var(--rule2);
+}
+
+.data-phase-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--ink);
+}
+
+.data-phase-body {
+  font-size: 12.5px;
+  color: var(--dim);
+  line-height: 1.7;
+}
+
+.data-provider-tag {
+  display: inline-flex;
+  margin-top: 12px;
+  margin-right: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  background: var(--blue-light);
+  color: var(--blue);
+  border: 1px solid rgba(26,95,168,0.25);
+}
+
+/* ── DATA STRATEGY · build-vs-buy decision record ── */
+.data-decision {
+  margin-top: 20px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--paper2);
+}
+.data-decision summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 15px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.data-decision summary::-webkit-details-marker { display: none; }
+.data-decision summary::before {
+  content: '▸';
+  color: var(--teal-mid);
+  font-size: 11px;
+  transition: transform .15s;
+  flex-shrink: 0;
+}
+.data-decision[open] summary::before { transform: rotate(90deg); }
+.data-decision summary .sub { font-weight: 400; color: var(--dim); font-size: 12px; }
+.data-decision-body {
+  padding: 2px 20px 20px;
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: var(--dim);
+}
+.data-decision-body b { color: var(--ink); font-weight: 600; }
+.data-decision-body .step { margin-bottom: 12px; }
+.data-decision-body .step:last-of-type { margin-bottom: 0; }
+.data-decision-note {
+  margin-top: 14px;
+  padding: 10px 14px;
+  border-left: 3px solid var(--amber-mid);
+  background: var(--amber-light);
+  font-size: 11.5px;
+  color: var(--amber);
+  line-height: 1.6;
+}
+.data-decision-note b { color: var(--amber); }
+
+/* ── ENTRY STRATEGY ── */
+.entry-paths {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.path-card {
+  border-radius: 10px;
+  border: 2px solid;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.path-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-weight: 500;
+  display: inline-flex;
+  margin-bottom: 14px;
+}
+
+.path-title {
+  font-family: 'IBM Plex Sans', serif;
+  font-size: 22px;
+  font-weight: 400;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+
+.path-body {
+  font-size: 13px;
+  color: var(--dim);
+  line-height: 1.75;
+}
+
+/* ── FOOTER ── */
+.hero-footer {
+  background: var(--ink);
+  color: rgba(245,242,237,0.35);
+  padding: 24px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ── ANIMATIONS ── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .hero, .section { padding: 48px 24px; }
+  .pillars, .two-col, .three-col, .metrics-grid,
+  .data-phases, .entry-paths { grid-template-columns: 1fr; }
+  .pillar, .data-phase { border-right: none; border-bottom: 1px solid var(--rule); }
+  .hero-stats { flex-direction: column; }
+  .hero-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .roadmap-iter { grid-template-columns: 1fr; }
+  .roadmap-spine { display: none; }
+  .hero-footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
+<div class="hero">
+  <div class="hero-grid-lines"></div>
+  <div class="hero-accent"></div>
+  <div class="hero-accent2"></div>
+
+  <div class="hero-eyebrow">Product Vision &amp; Roadmap &nbsp;·&nbsp; 2025–2027</div>
+
+  <h1 class="hero-title">
+    CG<br>
+    <span class="accent">TRACE</span>
+  </h1>
+
+  <p class="hero-desc">
+    Australia's first purpose-built CGT parcel tracker for small-to-mid tier accounting practices — turning a complex compliance burden into a defensible, audit-ready workflow.
+  </p>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="stat-num">$1<span>.05T</span></div>
+      <div class="stat-label">SMSF assets under<br>management in AU</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-num">653<span>k+</span></div>
+      <div class="stat-label">Self-managed super<br>funds in Australia</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Purpose-built tools for<br>mid-tier accounting firms</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-num">18<span>–24</span></div>
+      <div class="stat-label">Months to first<br>defensible segment</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ VISION PILLARS ═══════════════════════════════════ -->
+<div class="section fade-in">
+  <div class="section-label">01 — Product Vision</div>
+  <h2 class="section-title">Built on three<br><em>uncompromising principles</em></h2>
+  <p class="section-sub">The market is full of tools that get close. CGTrace is designed to be the first that gets it exactly right — at accounting firm grade.</p>
+
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pillar-num">01</div>
+      <span class="pillar-icon">⚖️</span>
+      <div class="pillar-title">Tax-correct by default</div>
+      <div class="pillar-body">Every parcel, every corporate action, every AMMA adjustment applied using the exact statutory rules — s. 130-20, s. 6BA, Div 125, s. 110-45. No shortcuts. No approximations. Output that survives an ATO audit.</div>
+      <span class="pillar-tag" style="background: var(--teal-light); color: var(--teal); border: 1px solid rgba(127,119,221,0.25);">Correctness first</span>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">02</div>
+      <span class="pillar-icon">🔍</span>
+      <div class="pillar-title">Full audit trail</div>
+      <div class="pillar-body">Every figure traceable to its source — data feed, ASX announcement, or ATO class ruling. The accountant can see exactly why a capital gain is what it is, and hand that explanation to a client or the ATO with confidence.</div>
+      <span class="pillar-tag" style="background: var(--blue-light); color: var(--blue); border: 1px solid rgba(26,95,168,0.25);">Defensible output</span>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">03</div>
+      <span class="pillar-icon">⚡</span>
+      <div class="pillar-title">Workflow-embedded</div>
+      <div class="pillar-body">Not a lookup tool. Not a calculator. A living parcel register that updates automatically as corporate actions occur, surfaces anomalies before they become errors, and integrates into the workflows accounting practices already use.</div>
+      <span class="pillar-tag" style="background: var(--amber-light); color: var(--amber); border: 1px solid rgba(184,92,10,0.25);">Embedded workflow</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ MARKET OPPORTUNITY ═══════════════════════════════════ -->
+<div class="section section-tint fade-in">
+  <div class="section-label">02 — Market Opportunity</div>
+  <h2 class="section-title">A $1 trillion market with<br><em>a structural gap</em></h2>
+  <p class="section-sub">The enterprise segment is dominated by BGL and Class Super — but the mid-tier accounting practice segment is genuinely unserved.</p>
+
+  <div class="three-col">
+    <div class="market-card" style="background: var(--ink); border-color: rgba(255,255,255,0.08); color: var(--paper);">
+      <div class="market-card-num" style="color: var(--teal-mid);">$1.05T</div>
+      <div class="market-card-label" style="color: rgba(245,242,237,0.45);">SMSF assets AU (Mar 2024)</div>
+      <div class="market-card-body">Australia's self-directed retirement sector represents one of the world's largest pools of retail-managed investment assets — all generating CGT obligations.</div>
+    </div>
+    <div class="market-card" style="background: var(--amber-light); border-color: var(--amber-mid);">
+      <div class="market-card-num" style="color: var(--amber);">49%</div>
+      <div class="market-card-label" style="color: var(--amber);">BGL market share</div>
+      <div class="market-card-body">BGL dominates the high-volume end. Class Super takes ~53% of adviser practices. The mid-tier — practices with 20 to 200 client portfolios — has no purpose-built tool.</div>
+    </div>
+    <div class="market-card" style="background: var(--teal-light); border-color: var(--teal-mid);">
+      <div class="market-card-num" style="color: var(--teal);">0</div>
+      <div class="market-card-label" style="color: var(--teal);">Purpose-built mid-tier tools</div>
+      <div class="market-card-body">Sharesight serves retail self-investors. BGL requires long implementation. The whitespace is real: an accounting-grade CGT parcel tracker that a two-person firm can adopt in days, not months.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ COMPETITIVE POSITION ═══════════════════════════════════ -->
+<div class="section fade-in">
+  <div class="section-label">03 — Competitive Position</div>
+  <h2 class="section-title">Where <em>CGTrace</em> wins</h2>
+  <p class="section-sub">Incumbents are either overbuilt for enterprise or underbuilt for compliance. We are purpose-designed for the gap.</p>
+
+  <div style="border: 1px solid var(--rule); border-radius: 12px; overflow: hidden;">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Platform</th>
+          <th>Tax-correct parcels</th>
+          <th>Corporate actions auto</th>
+          <th>ATO audit trail</th>
+          <th>Mid-tier accountants</th>
+          <th>Setup time</th>
+          <th>Segment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="us-row">
+          <td>✦ CGTrace</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓ Primary</span></td>
+          <td style="color: var(--teal); font-weight:500;">Days</td>
+          <td style="color: var(--teal); font-weight:500;">Mid-tier target</td>
+        </tr>
+        <tr>
+          <td>BGL Simple Fund 360</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="cross">✗ Overbuilt</span></td>
+          <td>3–6 months</td>
+          <td>Large firms</td>
+        </tr>
+        <tr>
+          <td>Class Super</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="part">~ Complex</span></td>
+          <td>2–4 months</td>
+          <td>Adviser practices</td>
+        </tr>
+        <tr>
+          <td>Sharesight</td>
+          <td><span class="part">~ Partial</span></td>
+          <td><span class="part">~ Partial</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗ Not designed</span></td>
+          <td>Hours</td>
+          <td>Retail self-investor</td>
+        </tr>
+        <tr>
+          <td>Spreadsheet (current)</td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="part">~ Default choice</span></td>
+          <td>Immediate</td>
+          <td>Everyone by default</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ ROADMAP ═══════════════════════════════════ -->
+<div class="section section-tint fade-in">
+  <div class="section-label">04 — Product Roadmap</div>
+  <h2 class="section-title">Five iterations,<br><em>dependency-ordered</em></h2>
+  <p class="section-sub">Ship incrementally. Tax-correct at every stage. Each iteration is independently shippable — no big-bang release.</p>
+
+  <div class="roadmap-track">
+    <div class="roadmap-spine"></div>
+
+    <!-- ITER 1 -->
+    <div class="roadmap-iter">
+      <div class="iter-marker">
+        <div class="iter-dot" style="border-color: var(--red); color: var(--red);">01</div>
+      </div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div>
+            <div class="iter-title">Bug Fixes &amp; BONUS Corrections</div>
+            <div class="iter-subtitle">Fix — shipped &nbsp;·&nbsp; Q3 2025</div>
+          </div>
+          <span class="iter-phase-tag" style="background: var(--red-light); color: var(--red); border: 1px solid rgba(192,50,30,0.25);">Correctness critical</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">The existing BONUS origin type assigns the wrong acquisition date and wrong cost base. Both errors produce incorrect capital gains calculations across entire holding histories. Fix before building anything new.</p>
+          <div class="req-chips">
+            <span class="req-chip">Inherited acquisition dates</span>
+            <span class="req-chip">Cost base reapportionment</span>
+            <span class="req-chip">Fan-out per source parcel</span>
+            <span class="req-chip">sourceParcelId field</span>
+            <span class="req-chip">Conservation check</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ITER 2 -->
+    <div class="roadmap-iter">
+      <div class="iter-marker">
+        <div class="iter-dot" style="border-color: var(--amber); color: var(--amber);">02</div>
+      </div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div>
+            <div class="iter-title">BSP Origin Type &amp; Data Model</div>
+            <div class="iter-subtitle">Data model — shipped &nbsp;·&nbsp; Q4 2025</div>
+          </div>
+          <span class="iter-phase-tag" style="background: var(--amber-light); color: var(--amber); border: 1px solid rgba(184,92,10,0.25);">New capability</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">Bonus Share Plans are legally distinct from Bonus Issues — different governing law (s. 6BA ITAA 1936 vs s. 130-20 ITAA 1997), different franking treatment, different cost base mechanics. Introduce BSP as a distinct origin with its own schema and class ruling register.</p>
+          <div class="req-chips">
+            <span class="req-chip">BSP origin config</span>
+            <span class="req-chip">BSP action parameters schema</span>
+            <span class="req-chip">Class ruling register (AFIC, Mirrabooka, Whitefield)</span>
+            <span class="req-chip">isReapportionment flag</span>
+            <span class="req-chip">CA_DIMENSIONS matrix update</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ITER 3 -->
+    <div class="roadmap-iter">
+      <div class="iter-marker">
+        <div class="iter-dot" style="border-color: var(--teal); color: var(--teal);">03</div>
+      </div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div>
+            <div class="iter-title">BSP Calculation Engine</div>
+            <div class="iter-subtitle">Core engine — shipped &nbsp;·&nbsp; Q1 2026</div>
+          </div>
+          <span class="iter-phase-tag" style="background: var(--teal-light); color: var(--teal); border: 1px solid rgba(127,119,221,0.25);">High complexity</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">applyBSP() function handles multi-parcel holdings, partial participation elections, cost base conservation verification, fractional share rounding, and the reapportionment vs additive distinction. No CGT event triggered at receipt.</p>
+          <div class="req-chips">
+            <span class="req-chip">applyBSP() engine</span>
+            <span class="req-chip">Partial participation</span>
+            <span class="req-chip">Conservation check (±$0.01)</span>
+            <span class="req-chip">Zero-share parcel skip</span>
+            <span class="req-chip">No CGT event at receipt</span>
+            <span class="req-chip">No income assessed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ITER 4 -->
+    <div class="roadmap-iter">
+      <div class="iter-marker">
+        <div class="iter-dot" style="border-color: var(--blue); color: var(--blue);">04</div>
+      </div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div>
+            <div class="iter-title">UI, Reporting &amp; Audit Trail</div>
+            <div class="iter-subtitle">Surface — shipped &nbsp;·&nbsp; Q2 2026</div>
+          </div>
+          <span class="iter-phase-tag" style="background: var(--blue-light); color: var(--blue); border: 1px solid rgba(26,95,168,0.25);">User-facing</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">Surface inherited acquisition dates clearly, display reapportionment adjustments distinctly from genuine cost base reductions, link BSP parcels to source parcels visually, add class ruling badges, and update the seven-dimension matrix and legend view.</p>
+          <div class="req-chips">
+            <span class="req-chip">Inherited date indicator</span>
+            <span class="req-chip">↔ Reapportionment display</span>
+            <span class="req-chip">Source parcel linking</span>
+            <span class="req-chip">Class ruling badge</span>
+            <span class="req-chip">BSP modal + preview</span>
+            <span class="req-chip">Legend view update</span>
+            <span class="req-chip">Cost base conservation panel</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ITER 5 Practice Workflow + AI -->
+    <div class="roadmap-iter">
+      <div class="iter-marker">
+        <div class="iter-dot" style="border-color: var(--purple); color: var(--purple);">05</div>
+      </div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div>
+            <div class="iter-title">Practice Workflow, Sync &amp; Autopilot</div>
+            <div class="iter-subtitle">Surface + AI — shipped &nbsp;·&nbsp; Q2 2026</div>
+          </div>
+          <span class="iter-phase-tag" style="background: var(--purple-light); color: var(--purple); border: 1px solid rgba(90,56,180,0.25);">Practice integration</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">A five-stage locked reconciliation workflow — reconcile inputs, review parcels and corporate actions, resolve CGT events, generate report, mark reconciled — replaces ad hoc review, with rollback if something's wrong. Practice-Manager sync (Xero Practice Manager, MYOB AE/AO togglable) reads client and job context and writes the CGT figure straight back — no duplicate entry. An Advisory Partner Dashboard adds group-level vitals and an opportunity ranker for firms pivoting to advisory. An Autopilot toggle flips the AI proactive, surfacing what's outstanding before being asked.</p>
+          <div class="req-chips">
+            <span class="req-chip">5-stage reconciliation workflow</span>
+            <span class="req-chip">Practice-Manager sync (Xero PM / MYOB AE/AO)</span>
+            <span class="req-chip">Multi-client triage (Firm Workspace)</span>
+            <span class="req-chip">Advisory Partner Dashboard</span>
+            <span class="req-chip">AI cost-base reconstruction (build flow + sample wizard)</span>
+            <span class="req-chip">Autopilot briefing (scripted, 2 scenarios)</span>
+            <span class="req-chip">Action Wizard</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ITER 6 Future -->
+    <div class="roadmap-iter">
+      <div class="iter-marker">
+        <div class="iter-dot" style="border-color: var(--rule2); color: var(--muted);">→</div>
+      </div>
+      <div class="iter-card" style="border-style: dashed; opacity: 0.7;">
+        <div class="iter-card-head">
+          <div>
+            <div class="iter-title">Phase 3 — Data &amp; Distribution</div>
+            <div class="iter-subtitle">Planned next &nbsp;·&nbsp; H2 2026</div>
+          </div>
+          <span class="iter-phase-tag" style="background: var(--rule); color: var(--muted); border: 1px solid var(--rule2);">Planned next</span>
+        </div>
+        <div class="iter-card-body">
+          <div class="req-chips">
+            <span class="req-chip">AU registry feed (Automic)</span>
+            <span class="req-chip">Broker API integrations</span>
+            <span class="req-chip">CGT schedule export</span>
+            <span class="req-chip">Accountant-client portal</span>
+            <span class="req-chip">Bulk parcel reconstruction</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ DATA STRATEGY ═══════════════════════════════════ -->
+<div class="section fade-in">
+  <div class="section-label">05 — Data Strategy</div>
+  <h2 class="section-title">The moat is <em>not</em> the data.<br>It's what sits on top.</h2>
+  <p class="section-sub">The data layer is commoditising. Competitive advantage lives in the reconciliation logic and audit trail — built in three phases, each scoped to what's actually licensable, not scraped.</p>
+
+  <div class="data-phases">
+    <div class="data-phase">
+      <div class="data-phase-num" style="color: rgba(127,119,221,0.25);">P1</div>
+      <div class="data-phase-title">Mid-market APIs + manual override</div>
+      <div class="data-phase-body">Historical pricing and basic corporate action data from accessible APIs. Manual workflow for AMMA statements and ATO class ruling references. Accept incomplete automation — make manual entry fast and auditable.</div>
+      <span class="data-provider-tag">IEX Cloud</span>
+      <span class="data-provider-tag">Morningstar</span>
+      <span class="data-provider-tag">Manual AMMA</span>
+    </div>
+    <div class="data-phase" style="background: rgba(127,119,221,0.03);">
+      <div class="data-phase-num" style="color: rgba(127,119,221,0.4);">P2</div>
+      <div class="data-phase-title">AU registry integration — verification layer</div>
+      <div class="data-phase-body">Pursue a registry data relationship (Automic Group, Computershare, Link) for what a registry actually holds: current holding balances and the mechanics of a corporate action — ratio, record date, DRP price — as the issuer's own registrar. This confirms the parcel register; it isn't a cost-base source. Registries don't carry original purchase price, so P3 stays the source of truth for cost base.</div>
+      <span class="data-provider-tag">Automic Group</span>
+      <span class="data-provider-tag">Computershare</span>
+      <span class="data-provider-tag">Link Market Services</span>
+    </div>
+    <div class="data-phase">
+      <div class="data-phase-num" style="color: rgba(127,119,221,0.55);">P3</div>
+      <div class="data-phase-title">Direct broker connectivity</div>
+      <div class="data-phase-body">API feeds from high-volume AU brokers to automate transaction ingestion. Reduces data entry burden and error rates — the primary accounting firm value proposition. Start with the top 4 by retail volume.</div>
+      <span class="data-provider-tag">CommSec</span>
+      <span class="data-provider-tag">nabtrade</span>
+      <span class="data-provider-tag">Selfwealth</span>
+      <span class="data-provider-tag">Stake</span>
+    </div>
+  </div>
+
+  <details class="data-decision">
+    <summary>Scoped against what's licensable, not scraped <span class="sub">— the shared data-warehouse idea I considered, and ruled out</span></summary>
+    <div class="data-decision-body">
+      <div class="step"><b>The instinct.</b> Collect corporate-action and pricing data once — off ASX announcements, or a company's own site — and reuse it across every client, instead of paying per call. An expanding shared warehouse that gets more valuable the more firms query it.</div>
+      <div class="step"><b>Why it doesn't survive contact with the terms.</b> ASX's own Terms of Use bar exactly this: Market Announcements are for personal/private use only, and any commercial use needs ASX's written authority — enforced with active crawler-blocking and law-enforcement referral, not a dormant clause. IRESS, Refinitiv/LSEG and Morningstar sit on the same structure: redistribution is a separately-licensed, separately-priced right, not something that follows from having access. Industry norm, not an ASX quirk.</div>
+      <div class="step"><b>What the incumbents do instead.</b> Sharesight and BGL/Class don't scrape — they pay for it: an ASX delayed-pricing partnership, direct broker integrations, and registry "Data Packs" sold as a commercial product. The one piece that isn't just a paid API — AMIT/AMMA tax-component detail — comes from bilateral relationships fund managers build over years. That's a partnerships moat, not a technical one, and it's realistic to plan for only once there's client volume to justify those conversations.</div>
+      <div class="step"><b>What this means for the phasing above.</b> P3's broker feeds stay the primary, cost-base-bearing source — it's the client's own data, effectively free as part of the brokerage relationship. P2's registry layer is a balance-and-mechanics check, not a replacement. One more legitimate channel worth planning for: the ATO's own Annual Investment Income Report feeds its prefill service for registered tax agents through the same SBR channel this product already assumes for pushing the CGT figure back — a per-client, consent-gated pull, which is also why this stays a per-firm data strategy rather than a shared warehouse across firms.</div>
+      <div class="data-decision-note"><b>Not legal advice</b> — directional product research to scope the build, checked against each vendor's own published terms.</div>
+    </div>
+  </details>
+</div>
+
+<!-- ═══════════════════════════════════ SUCCESS METRICS ═══════════════════════════════════ -->
+<div class="section section-dark fade-in">
+  <div class="section-label on-dark">06 — Success Definition</div>
+  <h2 class="section-title on-dark">What year one<br><em>actually looks like</em></h2>
+  <p class="section-sub on-dark">Three layers of measurement — correctness, adoption, and retention signal. Revenue is a year-three metric.</p>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-phase" style="color: var(--teal-mid);">Layer 01 — Correctness</div>
+      <div class="metric-items">
+        <div class="metric-item">
+          <div class="metric-bullet" style="background: var(--teal-mid);"></div>
+          <div class="metric-text"><strong>Zero ATO-disputed outputs</strong> from the parcel engine. In a compliance product, defect rate matters more than feature count.</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-bullet" style="background: var(--teal-mid);"></div>
+          <div class="metric-text"><strong>100% cost base conservation</strong> verified on all BSP and BONUS corporate action events. Conservation failure is a product defect, not a rounding issue.</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-bullet" style="background: var(--teal-mid);"></div>
+          <div class="metric-text"><strong>All 14 origin types</strong> producing correct acquisition dates, cost bases, and CGT discount eligibility assessments in acceptance testing.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-phase" style="color: var(--amber-mid);">Layer 02 — Adoption</div>
+      <div class="metric-items">
+        <div class="metric-item">
+          <div class="metric-bullet" style="background: var(--amber-mid);"></div>
+          <div class="metric-text"><strong>50 accounting practices</strong> actively using the tool by end of year one — each with at least 10 client portfolios tracked.</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-bullet" style="background: var(--amber-mid);"></div>
+          <div class="metric-text"><strong>Average 30+ parcels per portfolio</strong> suggests users are entering real, complex data — not testing with toy portfolios.</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-bullet" style="background: var(--amber-mid);"></div>
+          <div class="metric-text"><strong>Net Promoter Score &gt; 45</strong> among accounting firm principals — the referral channel is the fastest path to growth in this segment.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-phase" style="color: var(--blue-mid);">Layer 03 — Retention signal</div>
+      <div class="metric-items">
+        <div class="metric-item">
+          <div class="metric-bullet" style="background: var(--blue-mid);"></div>
+          <div class="metric-text"><strong>60%+ of firms process at least one corporate action</strong> through the tool rather than manually. This signals the workflow is embedded, not just sampled.</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-bullet" style="background: var(--blue-mid);"></div>
+          <div class="metric-text"><strong>Tax-season return rate:</strong> % of firms who actively use the tool during the June–October CGT reporting window. This is the real retention test.</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-bullet" style="background: var(--blue-mid);"></div>
+          <div class="metric-text"><strong>Reconstruction requests:</strong> number of clients where the tool is used to reconstruct 5+ years of historical parcels — a leading indicator of deep dependency.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-card" style="border-color: rgba(255,255,255,0.06);">
+      <div class="metric-phase" style="color: rgba(245,242,237,0.35);">What we do NOT measure in year one</div>
+      <div class="metric-items">
+        <div class="metric-item">
+          <div class="metric-bullet" style="background: rgba(245,242,237,0.2);"></div>
+          <div class="metric-text" style="color: rgba(245,242,237,0.35);">Revenue from enterprise or SMSF lodgement volume — those are year-three metrics and require regulatory credentialing we haven't built yet.</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-bullet" style="background: rgba(245,242,237,0.2);"></div>
+          <div class="metric-text" style="color: rgba(245,242,237,0.35);">Feature count or sprint velocity — in a compliance product, shipping correct features slowly beats shipping wrong features fast.</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-bullet" style="background: rgba(245,242,237,0.2);"></div>
+          <div class="metric-text" style="color: rgba(245,242,237,0.35);">Market share vs BGL or Class Super — they're serving different segments. Year one is about owning the mid-tier beachhead, not fighting the enterprise market.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ ENTRY STRATEGY ═══════════════════════════════════ -->
+<div class="section fade-in">
+  <div class="section-label">07 — Go-to-Market</div>
+  <h2 class="section-title">Two viable paths.<br><em>One clear recommendation.</em></h2>
+  <p class="section-sub">Discovery settled the buyer question: the accounting <em>firm</em> is the buyer, not the retail investor (who is DIY and price-sensitive). The SMSF enterprise segment is closed to new entrants for 5–7 years; the mid-tier firm path is achievable in 18–24 months.</p>
+
+  <div class="entry-paths">
+    <div class="path-card" style="border-color: var(--teal); background: var(--teal-light);">
+      <span class="path-badge" style="background: var(--teal); color: white;">★ Recommended</span>
+      <div class="path-title">Path A — Firm-first, freemium as wedge</div>
+      <div class="path-body">Sell directly to small–mid accounting practices — the validated buyer — on the capabilities they can't get elsewhere: correct corporate actions, AMMA processing, multi-client triage, and an ATO-ready audit trail. Run a free retail tier purely as a <strong>lead-gen and data wedge</strong> — satisfied investors refer their accountant (the Pro buyer) — not as the core motion. Revenue lands in year one, and the moat is compliance depth, not consumer network effects.</div>
+      <div style="margin-top: 16px; display: flex; gap: 6px; flex-wrap: wrap;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: 99px; background: var(--teal); color: white;">Validated buyer</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: 99px; background: rgba(127,119,221,0.15); color: var(--teal); border: 1px solid rgba(127,119,221,0.3);">Year-one revenue</span>
+      </div>
+    </div>
+
+    <div class="path-card" style="border-color: var(--blue); background: var(--blue-light);">
+      <span class="path-badge" style="background: var(--blue-light); color: var(--blue); border: 1px solid rgba(26,95,168,0.3);">Alternative</span>
+      <div class="path-title">Path B — Embedded API model</div>
+      <div class="path-body">Build the CGT parcel engine as a licensed B2B API — the GainsKeeper model. License to accounting software vendors, super admin platforms, and broker-dealer tools. Avoids the distribution and trust problem entirely by becoming infrastructure rather than a competing product. Faster revenue, but no direct user relationship.</div>
+      <div style="margin-top: 16px; display: flex; gap: 6px; flex-wrap: wrap;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: 99px; background: var(--blue); color: white;">Faster B2B revenue</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: 99px; background: rgba(26,95,168,0.1); color: var(--blue); border: 1px solid rgba(26,95,168,0.25);">No consumer moat</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 20px; padding: 24px 28px; background: var(--ink); border-radius: 10px; color: var(--paper);">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(245,242,237,0.35); margin-bottom: 10px;">Key strategic insight</div>
+    <p style="font-family: 'IBM Plex Sans', serif; font-size: 18px; line-height: 1.65; color: rgba(245,242,237,0.9); font-style: italic; max-width: 760px;">
+      "Regulatory complexity is a durable moat — every new ATO rule deepens the incumbent advantage for BGL and Class Super. The window to win is building a superior reconciliation and audit layer on top of accessible data feeds. The first platform to reliably automate CGT parcel reconstruction at accounting firm scale will capture a structurally underserved segment."
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ FOOTER ═══════════════════════════════════ -->
+<div class="hero-footer">
+  <span>CGTrace — Product Vision &amp; Roadmap 2025–2027 · Updated 9 Jul 2026</span>
+  <span>Demo project · General in nature · Tax advice from a registered agent required</span>
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+<nav style="position:fixed;right:20px;bottom:20px;display:flex;gap:8px;z-index:2000;font-family:'IBM Plex Mono',monospace;">
+  <a href="cgt-portfolio-hub.html" style="padding:9px 15px;border-radius:99px;text-decoration:none;font-size:11px;letter-spacing:.04em;border:1px solid #D5CFEE;background:#FFFFFF;color:#534AB7;box-shadow:0 6px 20px rgba(28,21,64,.18);">← Hub</a>
+  <a href="cgt-delivery-board.html" style="padding:9px 15px;border-radius:99px;text-decoration:none;font-size:11px;letter-spacing:.04em;border:1px solid #7F77DD;background:#7F77DD;color:#fff;box-shadow:0 6px 20px rgba(127,119,221,.32);">Next: Delivery →</a>
+</nav>
+</body>
+</html>

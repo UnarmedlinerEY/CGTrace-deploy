@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>CGTrace — Feature Mapping Matrix</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#FAF9FF; --paper:#1C1540;
+  --teal:#7F77DD;   --teal-lt:rgba(127,119,221,.13);   --teal-bd:rgba(127,119,221,.4);
+  --amber:#e8882a;  --amber-lt:rgba(232,136,42,.12);   --amber-bd:rgba(232,136,42,.38);
+  --blue:#4a8fd4;   --blue-lt:rgba(74,143,212,.12);    --blue-bd:rgba(74,143,212,.35);
+  --slate:#7a8fa8;  --slate-lt:rgba(122,143,168,.10);  --slate-bd:rgba(122,143,168,.32);
+}
+body{background:var(--ink);color:var(--paper);font-family:'IBM Plex Sans',sans-serif;font-weight:400;min-height:100vh;}
+.page{max-width:980px;margin:0 auto;padding:52px 44px 80px;}
+
+/* HEADER */
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:flex;align-items:center;gap:14px;}
+.eyebrow::after{content:'';flex:1;max-width:180px;height:1px;background:rgba(127,119,221,.25);}
+.doc-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,6vw,68px);letter-spacing:.02em;line-height:.93;margin-bottom:12px;}
+.doc-title span{color:var(--teal);}
+.doc-sub{font-size:13.5px;color:rgba(28,21,64,.62);max-width:580px;line-height:1.75;margin-bottom:36px;}
+
+/* LEGEND */
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px;align-items:center;}
+.leg-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#6B64A0;margin-right:4px;}
+.leg-item{display:flex;align-items:center;gap:7px;font-size:12px;color:rgba(28,21,64,.55);}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* MATRIX SHELL */
+.matrix-shell{position:relative;margin-left:100px;margin-bottom:6px;}
+
+/* Y AXIS — line, arrow, vertical title, end labels */
+.y-axis{position:absolute;left:-38px;top:-6px;bottom:0;width:2px;background:var(--primary);border-radius:2px;pointer-events:none;}
+.y-axis::before{content:"";position:absolute;top:-7px;left:-4px;width:0;height:0;
+  border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:9px solid var(--primary);}
+.y-title{
+  position:absolute;left:-86px;top:0;bottom:0;width:18px;
+  display:flex;align-items:center;justify-content:center;
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--primary-deep);font-weight:600;pointer-events:none;
+}
+.y-ends{position:absolute;left:-34px;top:0;bottom:0;width:30px;
+  display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;padding:1px 0;pointer-events:none;}
+.y-end{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--primary-deep);font-weight:600;text-align:right;line-height:1.2;}
+
+/* MATRIX GRID */
+.matrix{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:3px;
+  background:rgba(28,21,64,.07);
+  border:1.5px solid rgba(28,21,64,.12);
+  border-radius:14px;
+  overflow:hidden;
+  position:relative;
+}
+
+/* Axis cross lines */
+.cross-h{position:absolute;top:50%;left:0;right:0;height:1.5px;background:rgba(28,21,64,.12);pointer-events:none;z-index:2;}
+.cross-v{position:absolute;left:50%;top:0;bottom:0;width:1.5px;background:rgba(28,21,64,.12);pointer-events:none;z-index:2;}
+
+/* QUADRANT */
+.q{position:relative;padding:24px 22px 20px;display:flex;flex-direction:column;gap:0;}
+.q-diff { background:rgba(127,119,221,.06);  }
+.q-stake{ background:rgba(74,143,212,.05);  }
+.q-gem  { background:rgba(232,136,42,.055); }
+.q-none { background:rgba(122,143,168,.04); }
+
+/* quadrant header */
+.q-head{margin-bottom:14px;}
+.q-type{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em;line-height:1;margin-bottom:3px;}
+.q-diff  .q-type{ color:var(--teal);  }
+.q-stake .q-type{ color:var(--blue);  }
+.q-gem   .q-type{ color:var(--amber); }
+.q-none  .q-type{ color:var(--slate); }
+.q-def{font-size:11px;color:rgba(28,21,64,.6);line-height:1.5;max-width:280px;}
+
+/* FEATURE ROWS */
+.feat-list{display:flex;flex-direction:column;gap:6px;}
+.feat{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:9px 12px;border-radius:7px;
+  border:1px solid rgba(28,21,64,.09);
+  background:rgba(28,21,64,.05);
+  cursor:pointer;
+  transition:background .15s,border-color .15s,transform .12s;
+}
+.feat:hover{background:rgba(28,21,64,.12);transform:translateX(3px);}
+.feat-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.feat-content{flex:1;}
+.feat-name{font-size:12.5px;font-weight:500;color:var(--paper);line-height:1.25;margin-bottom:2px;}
+.feat-why{font-size:11px;color:rgba(28,21,64,.62);line-height:1.4;}
+.feat-scores{
+  display:flex;flex-direction:column;gap:2px;
+  flex-shrink:0;text-align:right;
+}
+.feat-score{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;
+  color:rgba(28,21,64,.55);white-space:nowrap;
+}
+.feat-score span{font-weight:500;color:rgba(28,21,64,.65);}
+
+/* X AXIS — line, arrow, end labels, title */
+.x-axis{position:relative;height:2px;background:var(--primary);border-radius:2px;margin-top:14px;}
+.x-axis::after{content:"";position:absolute;right:-7px;top:-4px;width:0;height:0;
+  border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:9px solid var(--primary);}
+.x-bottom{display:flex;justify-content:space-between;margin-top:7px;padding:0 4px;}
+.x-end{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--primary-deep);font-weight:600;}
+.x-title{text-align:center;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--primary-deep);font-weight:600;}
+
+/* TOOLTIP */
+.tooltip{display:none;position:fixed;z-index:999;background:#1C1540;color:#D5CFF2;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:15px 17px;min-width:236px;max-width:275px;box-shadow:0 12px 40px rgba(0,0,0,.7);pointer-events:none;}
+.tooltip.vis{display:block;}
+.tt-name{font-weight:600;font-size:13px;margin-bottom:3px;color:white;}
+.tt-quad{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
+.tt-scores{display:flex;gap:0;margin-bottom:11px;border:1px solid rgba(28,21,64,.10);border-radius:7px;overflow:hidden;}
+.tt-score{flex:1;padding:8px 10px;text-align:center;}
+.tt-score:first-child{border-right:1px solid rgba(28,21,64,.10);}
+.tt-score-val{font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;margin-bottom:2px;}
+.tt-score-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:#B9B2E6;letter-spacing:.1em;text-transform:uppercase;}
+.tt-body{font-size:12px;line-height:1.65;color:#CFC9EE;}
+.tt-action{margin-top:9px;padding:7px 10px;border-radius:5px;background:rgba(28,21,64,.09);font-size:11px;font-style:italic;color:#C5BFEE;font-family:'IBM Plex Sans',sans-serif;line-height:1.5;}
+
+/* SUMMARY STRIP */
+.summary{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-top:24px;}
+.sc{background:rgba(28,21,64,.05);border:1px solid rgba(28,21,64,.09);border-radius:8px;padding:14px 14px;}
+.sc-label{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;margin-bottom:5px;font-weight:500;}
+.sc-title{font-family:'IBM Plex Sans',serif;font-size:14px;font-style:italic;color:rgba(28,21,64,.82);line-height:1.3;margin-bottom:5px;}
+.sc-body{font-size:11px;color:rgba(28,21,64,.62);line-height:1.6;}
+
+.footer{margin-top:32px;padding-top:18px;border-top:1px solid rgba(28,21,64,.10);display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#6B64A0;flex-wrap:wrap;gap:6px;}
+
+@media(max-width:680px){
+  .page{padding:28px 18px 52px;}
+  .matrix-shell{margin-left:42px;}
+  .y-ends{left:-38px;}
+  .summary{grid-template-columns:1fr 1fr;}
+  .matrix{grid-template-columns:1fr;grid-template-rows:repeat(4,auto);}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="eyebrow">Feature Mapping Framework &nbsp;·&nbsp; CGTrace</div>
+  <h1 class="doc-title">USER ADOPTION vs <span>VALUE</span></h1>
+  <p class="doc-sub">Features plotted by <strong style="color:rgba(28,21,64,.78);">user adoption</strong> — how widely a feature is used across accounting firms — against <strong style="color:rgba(28,21,64,.78);">value to user</strong> — how important it is when used. Hover any feature for scores and PM action.</p>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <span class="leg-label">Quadrant</span>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--teal);"></div>Differentiators — high value, high adoption</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--blue);"></div>Table Stakes — lower value, high adoption</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--amber);"></div>Hidden Gems — high value, low adoption</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--slate);"></div>Non-Essential — low value, low adoption</div>
+  </div>
+
+  <div class="matrix-shell">
+
+    <div class="y-axis"></div>
+    <div class="y-title">Value to user ↑</div>
+    <div class="y-ends">
+      <div class="y-end">High</div>
+      <div class="y-end">Low</div>
+    </div>
+
+    <div class="matrix">
+      <div class="cross-h"></div>
+      <div class="cross-v"></div>
+
+      <!-- TOP LEFT: Differentiators — high value, LOW adoption -->
+      <!-- TOP RIGHT: Hidden Gems — high value, HIGH adoption   -->
+      <!-- Per framework: X=adoption(breadth), Y=value(depth)  -->
+      <!-- TL = low adoption + high value = Hidden Gems         -->
+      <!-- TR = high adoption + high value = Differentiators    -->
+      <!-- BL = low adoption + low value = Non-Essential        -->
+      <!-- BR = high adoption + low value = Table Stakes        -->
+
+      <!-- TOP LEFT: Hidden Gems -->
+      <div class="q q-gem">
+        <div class="q-head">
+          <div class="q-type">Hidden Gems</div>
+          <div class="q-def">High value to user · Low adoption — decisive for a specific segment. Surface proactively to unlock.</div>
+        </div>
+        <div class="feat-list">
+
+          <div class="feat" data-id="bsp">
+            <div class="feat-dot" style="background:var(--amber);"></div>
+            <div class="feat-content">
+              <div class="feat-name">BSP Correct Treatment</div>
+              <div class="feat-why">Only tool that handles s. 6BA correctly</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>22%</span></div>
+              <div class="feat-score">V <span>96</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="indexation">
+            <div class="feat-dot" style="background:var(--amber);"></div>
+            <div class="feat-content">
+              <div class="feat-name">Pre-1999 Indexation</div>
+              <div class="feat-why">Substantial tax saving — Sharesight gap</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>18%</span></div>
+              <div class="feat-score">V <span>93</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="demerger">
+            <div class="feat-dot" style="background:var(--amber);"></div>
+            <div class="feat-content">
+              <div class="feat-name">Demerger Engine</div>
+              <div class="feat-why">Infrequent but permanently high-stakes</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>30%</span></div>
+              <div class="feat-score">V <span>90</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="capreturn">
+            <div class="feat-dot" style="background:var(--amber);"></div>
+            <div class="feat-content">
+              <div class="feat-name">Capital Return (G1 Event)</div>
+              <div class="feat-why">Most mishandled event — not yet discovered</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>35%</span></div>
+              <div class="feat-score">V <span>88</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="advisory">
+            <div class="feat-dot" style="background:var(--amber);"></div>
+            <div class="feat-content">
+              <div class="feat-name">Advisory Partner Dashboard</div>
+              <div class="feat-why">Opt-in upsell tier — built, not yet broadly adopted</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>15%</span></div>
+              <div class="feat-score">V <span>90</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="autopilot">
+            <div class="feat-dot" style="background:var(--amber);"></div>
+            <div class="feat-content">
+              <div class="feat-name">Autopilot Briefing</div>
+              <div class="feat-why">New toggle, scripted prototype — most users haven't found it yet</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>8%</span></div>
+              <div class="feat-score">V <span>85</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TOP RIGHT: Differentiators -->
+      <div class="q q-diff">
+        <div class="q-head">
+          <div class="q-type">Differentiators</div>
+          <div class="q-def">High value to user · High adoption — most valuable features. Win deals, drive renewals. Protect and scale.</div>
+        </div>
+        <div class="feat-list">
+
+          <div class="feat" data-id="audit">
+            <div class="feat-dot" style="background:var(--teal);"></div>
+            <div class="feat-content">
+              <div class="feat-name">ATO Audit Trail</div>
+              <div class="feat-why">Primary trust mechanism for every firm</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>88%</span></div>
+              <div class="feat-score">V <span>95</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="multiclient">
+            <div class="feat-dot" style="background:var(--teal);"></div>
+            <div class="feat-content">
+              <div class="feat-name">Multi-Client Firm View</div>
+              <div class="feat-why">Category-defining — no consumer tool matches</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>95%</span></div>
+              <div class="feat-score">V <span>92</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="gainloss">
+            <div class="feat-dot" style="background:var(--teal);"></div>
+            <div class="feat-content">
+              <div class="feat-name">CGT Gain / Loss Report</div>
+              <div class="feat-why">Feeds every client tax return directly</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>100%</span></div>
+              <div class="feat-score">V <span>90</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="corpaction">
+            <div class="feat-dot" style="background:var(--teal);"></div>
+            <div class="feat-content">
+              <div class="feat-name">Corporate Action Engine</div>
+              <div class="feat-why">All 14 origin types — unique in the market</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>78%</span></div>
+              <div class="feat-score">V <span>94</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="pmsync">
+            <div class="feat-dot" style="background:var(--teal);"></div>
+            <div class="feat-content">
+              <div class="feat-name">Practice-Manager Sync</div>
+              <div class="feat-why">Writes back into Xero/MYOB — kills duplicate entry</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>72%</span></div>
+              <div class="feat-score">V <span>91</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="reconwf">
+            <div class="feat-dot" style="background:var(--teal);"></div>
+            <div class="feat-content">
+              <div class="feat-name">Reconciliation Workflow</div>
+              <div class="feat-why">Period-locked stages + rollback — the wedge, operationalised</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>100%</span></div>
+              <div class="feat-score">V <span>89</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- BOTTOM LEFT: Non-Essential -->
+      <div class="q q-none">
+        <div class="q-head">
+          <div class="q-type">Non-Essential</div>
+          <div class="q-def">Low value · Low adoption — invest only after core is proven. Phase 2–3 priorities.</div>
+        </div>
+        <div class="feat-list">
+
+          <div class="feat" data-id="broker">
+            <div class="feat-dot" style="background:var(--slate);"></div>
+            <div class="feat-content">
+              <div class="feat-name">Broker API Feeds</div>
+              <div class="feat-why">Phase 3 — high cost, low year-one need</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>20%</span></div>
+              <div class="feat-score">V <span>42</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="portal">
+            <div class="feat-dot" style="background:var(--slate);"></div>
+            <div class="feat-content">
+              <div class="feat-name">White-label Client Portal</div>
+              <div class="feat-why">Requires behaviour change — Phase 2</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>18%</span></div>
+              <div class="feat-score">V <span>38</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="rights">
+            <div class="feat-dot" style="background:var(--slate);"></div>
+            <div class="feat-content">
+              <div class="feat-name">Rights Register</div>
+              <div class="feat-why">Infrequent — simplify in v1</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>22%</span></div>
+              <div class="feat-score">V <span>35</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="sensitivity">
+            <div class="feat-dot" style="background:var(--slate);"></div>
+            <div class="feat-content">
+              <div class="feat-name">Sensitivity Analyser</div>
+              <div class="feat-why">Nice to have — rarely drives the purchase</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>28%</span></div>
+              <div class="feat-score">V <span>40</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- BOTTOM RIGHT: Table Stakes -->
+      <div class="q q-stake">
+        <div class="q-head">
+          <div class="q-type">Table Stakes</div>
+          <div class="q-def">Lower value · High adoption — expected by everyone. Required to be credible. Don't over-invest.</div>
+        </div>
+        <div class="feat-list">
+
+          <div class="feat" data-id="discount">
+            <div class="feat-dot" style="background:var(--blue);"></div>
+            <div class="feat-content">
+              <div class="feat-name">50% CGT Discount Flag</div>
+              <div class="feat-why">Universal expectation — absence disqualifies</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>100%</span></div>
+              <div class="feat-score">V <span>58</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="manualentry">
+            <div class="feat-dot" style="background:var(--blue);"></div>
+            <div class="feat-content">
+              <div class="feat-name">Manual Parcel Entry</div>
+              <div class="feat-why">Universal at onboarding — baseline expectation</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>100%</span></div>
+              <div class="feat-score">V <span>52</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="pdfexport">
+            <div class="feat-dot" style="background:var(--blue);"></div>
+            <div class="feat-content">
+              <div class="feat-name">ATO-Ready PDF Export</div>
+              <div class="feat-why">Required for professional deliverable</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>92%</span></div>
+              <div class="feat-score">V <span>55</span></div>
+            </div>
+          </div>
+
+          <div class="feat" data-id="amma">
+            <div class="feat-dot" style="background:var(--blue);"></div>
+            <div class="feat-content">
+              <div class="feat-name">AMMA / AMIT Processing</div>
+              <div class="feat-why">Expected by any ETF-holding client</div>
+            </div>
+            <div class="feat-scores">
+              <div class="feat-score">A <span>68%</span></div>
+              <div class="feat-score">V <span>60</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /matrix -->
+
+    <div class="x-axis"></div>
+    <div class="x-bottom">
+      <span class="x-end">Low</span>
+      <span class="x-end">High</span>
+    </div>
+    <div class="x-title">User adoption →</div>
+
+  </div><!-- /matrix-shell -->
+
+  <!-- SUMMARY STRIP -->
+  <div class="summary">
+    <div class="sc" style="border-color:rgba(232,136,42,.22);">
+      <div class="sc-label" style="color:rgba(232,136,42,.72);">Hidden Gems</div>
+      <div class="sc-title">"High value, undiscovered."</div>
+      <div class="sc-body">Surface via onboarding nudges and in-app prompts. When triggered, these features are decisive — BSP and indexation win sales outright.</div>
+    </div>
+    <div class="sc" style="border-color:rgba(127,119,221,.22);">
+      <div class="sc-label" style="color:rgba(127,119,221,.75);">Differentiators</div>
+      <div class="sc-title">"Your moat. Protect it."</div>
+      <div class="sc-body">High value and widely used. These win deals and drive renewals. Invest in quality and depth. Never de-prioritise.</div>
+    </div>
+    <div class="sc" style="border-color:rgba(122,143,168,.2);">
+      <div class="sc-label" style="color:rgba(122,143,168,.65);">Non-Essential</div>
+      <div class="sc-title">"Phase 2 — not year one."</div>
+      <div class="sc-body">Low adoption and lower value at launch. High implementation cost relative to impact. Revisit after differentiators are proven.</div>
+    </div>
+    <div class="sc" style="border-color:rgba(74,143,212,.22);">
+      <div class="sc-label" style="color:rgba(74,143,212,.72);">Table Stakes</div>
+      <div class="sc-title">"Required. Don't over-invest."</div>
+      <div class="sc-body">Every user expects these. Absence disqualifies — presence doesn't differentiate. Ship complete, then stop investing.</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>CGTrace — Feature Mapping Matrix · User Adoption vs Value to User · Updated 28 Jun 2026</span>
+    <span>A = adoption rate · V = value score · Hover any feature for detail</span>
+  </div>
+</div>
+
+<!-- TOOLTIP -->
+<div class="tooltip" id="tooltip">
+  <div class="tt-name"   id="tt-name"></div>
+  <div class="tt-quad"   id="tt-quad"></div>
+  <div class="tt-scores" id="tt-scores"></div>
+  <div class="tt-body"   id="tt-body"></div>
+  <div class="tt-action" id="tt-action"></div>
+</div>
+
+<script>
+const DATA = {
+  bsp:        { name:"BSP Correct Treatment",     quad:"Hidden Gem",      qcolor:"#e8882a", adoption:"22%", value:"96/100", body:"Only a subset of clients hold BSP-eligible stocks (AFIC, Mirrabooka, Whitefield). When they do, every other tool gets it wrong — producing incorrect gains. Adoption is low but value is extreme when triggered.", action:"Surface proactively in onboarding. Market explicitly to firms with LIC / listed investment company clients." },
+  indexation: { name:"Pre-1999 Indexation",       quad:"Hidden Gem",      qcolor:"#e8882a", adoption:"18%", value:"93/100", body:"Applies to assets acquired before 21 Sep 1999. Low adoption because pre-1999 portfolios are rare — but the tax saving vs discount method can be substantial, and Sharesight doesn't support it at all.", action:"Create an in-app alert: 'This parcel may be eligible for indexation — check the Comparison tab.'" },
+  demerger:   { name:"Demerger Engine",            quad:"Hidden Gem",      qcolor:"#e8882a", adoption:"30%", value:"90/100", body:"Demergers are infrequent but high-stakes — wrong treatment produces incorrect gains on both entities permanently. When a client portfolio includes a historical demerger, this feature is the deciding factor.", action:"Highlight in the corporate actions onboarding checklist. Link to ATO class ruling references." },
+  capreturn:  { name:"Capital Return (G1 Event)", quad:"Hidden Gem",      qcolor:"#e8882a", adoption:"35%", value:"88/100", body:"Most commonly mishandled CGT event in the market. Accountants don't know the tool handles it correctly without being shown. High value — an error here understates gains across every affected parcel.", action:"Feature spotlight in onboarding: 'Did you know we auto-apply capital returns to every parcel?'" },
+  advisory:   { name:"Advisory Partner Dashboard", quad:"Hidden Gem",     qcolor:"#e8882a", adoption:"15%", value:"90/100", body:"A separate paid tier, not for every customer: group-level vitals in one peek, an opportunity ranker, and a 'Scope advisory engagement' upsell flow. Pitched at firms pivoting to advisory as a growth line — not the compliance-buyer majority.", action:"Don't fold this into the core pitch — it's a second sale to a subset of firms. Surface it once Compliance trust is established, not on day one." },
+  autopilot:  { name:"Autopilot Briefing",        quad:"Hidden Gem",      qcolor:"#e8882a", adoption:"8%",  value:"85/100", body:"A toggle that flips the AI from reactive (answers what's asked) to proactive (surfaces what's outstanding before being asked). Currently a scripted, Wizard-of-Oz prototype covering two scenarios — not yet validated with real firms.", action:"Promising early reaction to the concept, but it's a prototype, not a proven driver yet. Validate with firm interviews before investing further engineering." },
+  audit:      { name:"ATO Audit Trail",            quad:"Differentiator",  qcolor:"#7F77DD", adoption:"88%", value:"95/100", body:"Every accountant relies on this to justify output to clients and the ATO. The primary trust mechanism. No competitor provides an equivalent — this is the reason the tool is professional-grade.", action:"Protect at all costs. Any regression here triggers immediate churn. Invest in depth and export quality." },
+  multiclient:{ name:"Multi-Client Firm View",    quad:"Differentiator",  qcolor:"#7F77DD", adoption:"95%", value:"92/100", body:"The defining feature for accounting firms. Every practice user opens this first. Replaces juggling separate client logins. No consumer tool offers this — a genuine category-maker.", action:"First screen after login. Invest in speed, search, and bulk-action workflows as the firm scales." },
+  gainloss:   { name:"CGT Gain / Loss Report",    quad:"Differentiator",  qcolor:"#7F77DD", adoption:"100%",value:"90/100", body:"Feeds directly into every client's tax return. Near-universal adoption. Any regression destroys trust immediately. Must never break — zero tolerance for calculation errors.", action:"Treat as P0. Automated test coverage on every calculation path. Never ship unvalidated changes." },
+  corpaction: { name:"Corporate Action Engine",   quad:"Differentiator",  qcolor:"#7F77DD", adoption:"78%", value:"94/100", body:"All 14 origin types handled correctly with correct acquisition dates, cost base reapportionment, and ATO rule application. No competitor does all 14 correctly — this is the technical moat.", action:"Invest in coverage breadth. Each new origin type added increases switching cost and widens the moat." },
+  pmsync:     { name:"Practice-Manager Sync",     quad:"Differentiator",  qcolor:"#7F77DD", adoption:"72%", value:"91/100", body:"Reads client / group / job / return context from Xero Practice Manager (MYOB AE/AO as a togglable source) and writes back exactly one thing — the CGT figure plus workpaper, advancing the return's status. No more retyping a number the firm already calculated.", action:"This is the seamless-workflow promise made real. Expand the write-back surface carefully — one clean write beats five chatty ones." },
+  reconwf:    { name:"Reconciliation Workflow",   quad:"Differentiator",  qcolor:"#7F77DD", adoption:"100%",value:"89/100", body:"Turns the cost-base wedge into a structured period: Reconcile inputs → Review parcels & corp. actions → Resolve CGT events → Generate report → Mark reconciled — with a real rollback to undo a period if something's wrong. The validated wedge, given a workflow.", action:"Keep rollback bulletproof — it's the safety net that lets accountants trust a structured period over a spreadsheet they fully control." },
+  broker:     { name:"Broker API Feeds",           quad:"Non-Essential",   qcolor:"#7a8fa8", adoption:"20%", value:"42/100", body:"High implementation cost — each feed requires a commercial relationship. Low year-one adoption because accountants reconstruct manually regardless. High long-term stickiness once embedded.", action:"Phase 3 only. Do not invest until differentiators are proven and 50+ Practice-tier firms onboarded." },
+  portal:     { name:"White-label Client Portal",  quad:"Non-Essential",   qcolor:"#7a8fa8", adoption:"18%", value:"38/100", body:"Requires behaviour change from both firm and client. Most small practices don't offer self-service portals today. High switching cost once live — but that day is Phase 2.", action:"Design the data model now so it's not a rewrite later. Build the feature in Phase 2." },
+  rights:     { name:"Rights Register",            quad:"Non-Essential",   qcolor:"#7a8fa8", adoption:"22%", value:"35/100", body:"Rights issues are infrequent. Renounceable rights add CGT complexity; non-renounceable do not. Low value at launch because most portfolios won't encounter one in year one.", action:"Simplify to a lightweight audit record in v1. Full lifecycle tracker in v2 when adoption data exists." },
+  sensitivity:{ name:"Sensitivity Analyser",      quad:"Non-Essential",   qcolor:"#7a8fa8", adoption:"28%", value:"40/100", body:"Crossover price calculator between discount and indexation methods. Memorable in client conversations but rarely the reason to purchase. Nice to have — not a conversion driver.", action:"Keep it in. Costs little to maintain. Surfaces well in demos. Do not invest further until adoption grows." },
+  discount:   { name:"50% CGT Discount Flag",     quad:"Table Stake",     qcolor:"#4a8fd4", adoption:"100%",value:"58/100", body:"Every user expects per-parcel 12-month holding test. Absence disqualifies the product immediately. Its presence does not differentiate — it is compliance baseline. Ship correct, then stop investing.", action:"Compliance baseline. Ship it perfect. Do not add features around it — it needs to be invisible." },
+  manualentry:{ name:"Manual Parcel Entry",        quad:"Table Stake",     qcolor:"#4a8fd4", adoption:"100%",value:"52/100", body:"Universal at onboarding. Everyone uses this but nobody consciously values it. Expected as a given. The opportunity is speed and validation quality — not features.", action:"Invest in speed: keyboard shortcuts, bulk paste, inline validation. Make the invisible feel effortless." },
+  pdfexport:  { name:"ATO-Ready PDF Export",       quad:"Table Stake",     qcolor:"#4a8fd4", adoption:"92%", value:"55/100", body:"Required for a professional client deliverable. Without it the tool is useful but not professional-grade. Every accounting practice expects a clean, formatted, exportable output.", action:"Ship clean formatting. The output represents the firm's brand to their client — quality matters." },
+  amma:       { name:"AMMA / AMIT Processing",     quad:"Table Stake",     qcolor:"#4a8fd4", adoption:"68%", value:"60/100", body:"Expected by any client holding ETFs. Without it the tool produces systematically wrong cost bases for ETF portfolios. Required to be credible for the ETF-holding segment.", action:"Surface the impact post-processing: 'Cost base adjusted by $X across Y parcels this year' — shift perception upward." },
+};
+
+const tooltip = document.getElementById("tooltip");
+
+document.querySelectorAll(".feat").forEach(el => {
+  const id = el.dataset.id;
+  const d  = DATA[id];
+  if (!d) return;
+  el.addEventListener("mouseenter", e => {
+    document.getElementById("tt-name").textContent = d.name;
+    const qel = document.getElementById("tt-quad");
+    qel.textContent = d.quad;
+    qel.style.color = d.qcolor;
+    document.getElementById("tt-scores").innerHTML = `
+      <div class="tt-score">
+        <div class="tt-score-val" style="color:${d.qcolor};">${d.adoption}</div>
+        <div class="tt-score-label">User Adoption</div>
+      </div>
+      <div class="tt-score">
+        <div class="tt-score-val" style="color:${d.qcolor};">${d.value}</div>
+        <div class="tt-score-label">Value to User</div>
+      </div>`;
+    document.getElementById("tt-body").textContent = d.body;
+    document.getElementById("tt-action").textContent = "→ " + d.action;
+    tooltip.style.borderColor = d.qcolor + "55";
+    tooltip.classList.add("vis");
+    move(e);
+  });
+  el.addEventListener("mousemove", move);
+  el.addEventListener("mouseleave", () => tooltip.classList.remove("vis"));
+});
+
+function move(e) {
+  const pad=14, tw=tooltip.offsetWidth, th=tooltip.offsetHeight;
+  let x=e.clientX+pad, y=e.clientY+pad;
+  if(x+tw>window.innerWidth -pad) x=e.clientX-tw-pad;
+  if(y+th>window.innerHeight-pad) y=e.clientY-th-pad;
+  tooltip.style.left=x+"px"; tooltip.style.top=y+"px";
+}
+</script>
+<nav style="position:fixed;right:20px;bottom:20px;display:flex;gap:8px;z-index:2000;font-family:'IBM Plex Mono',monospace;">
+  <a href="cgt-portfolio-hub.html" style="padding:9px 15px;border-radius:99px;text-decoration:none;font-size:11px;letter-spacing:.04em;border:1px solid #D5CFEE;background:#FFFFFF;color:#534AB7;box-shadow:0 6px 20px rgba(28,21,64,.18);">← Hub</a>
+  <a href="cgt-concept-map.html" style="padding:9px 15px;border-radius:99px;text-decoration:none;font-size:11px;letter-spacing:.04em;border:1px solid #7F77DD;background:#7F77DD;color:#fff;box-shadow:0 6px 20px rgba(127,119,221,.32);">Next: Design →</a>
+</nav>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>CGTrace — Standard Tier First-Run Setup Sequence</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#1C1540; --paper:#FAF9FF; --paper2:#FFFFFF; --rule:#D5CFEE; --rule2:#C5BFEE;
+  --dim:#7A72B0; --muted:#9088C0; --indigo:#1C1540; --indigo2:#231a52;
+  --teal:#7F77DD; --teal-light:#EEEDFE; --teal-mid:#a78bfa;
+  --amber:#b85c0a; --amber-light:#faebd4; --amber-mid:#e88730;
+  --red:#c0321e; --red-light:#fdeae7;
+  --blue:#1a5fa8; --blue-light:#e4eef9; --blue-mid:#4a8fd4;
+  --purple:#5a38b4; --purple-light:#eeebfc; --purple-mid:#8b6edc;
+  --gold:#c9911a; --gold-light:#fdf3d8;
+}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.6;overflow-x:hidden;}
+
+/* hero */
+.hero{position:relative;background:linear-gradient(165deg,var(--indigo2) 0%,var(--indigo) 72%);color:#fff;padding:64px 56px 48px;overflow:hidden;}
+.hero .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;}
+.hero .glow{position:absolute;top:-140px;right:-80px;width:480px;height:480px;background:radial-gradient(circle,rgba(127,119,221,.32) 0%,transparent 65%);pointer-events:none;}
+.wrap{max-width:1040px;margin:0 auto;position:relative;}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal-mid);margin-bottom:16px;display:flex;align-items:center;gap:14px;}
+.eyebrow::after{content:"";flex:1;max-width:180px;height:1px;background:rgba(255,255,255,.16);}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,5.2vw,52px);letter-spacing:.01em;line-height:1.08;margin-bottom:14px;}
+.hero h1 em{font-style:normal;color:var(--teal-mid);}
+.hero .desc{max-width:660px;font-size:15px;line-height:1.7;color:#CFC9EE;}
+.hero .desc b{color:#fff;font-weight:600;}
+.tier-tag{display:inline-flex;margin-top:18px;padding:4px 12px;border-radius:99px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:rgba(127,119,221,.18);color:var(--teal-mid);border:1px solid rgba(127,119,221,.4);}
+
+/* section */
+.section{max-width:1040px;margin:0 auto;padding:48px 56px 8px;}
+.sec-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.sec-title{font-family:'IBM Plex Sans',serif;font-size:clamp(24px,3.4vw,32px);font-weight:400;line-height:1.2;letter-spacing:-.01em;margin-bottom:8px;}
+.sec-title em{font-style:italic;color:var(--dim);}
+.sec-sub{font-size:14px;color:var(--dim);max-width:660px;line-height:1.7;margin-bottom:36px;}
+
+/* roadmap track (reused from cgt-roadmap.html) */
+.roadmap-track{position:relative;padding-top:8px;}
+.roadmap-spine{position:absolute;top:44px;left:20px;bottom:0;width:2px;background:linear-gradient(to bottom,var(--teal) 0%,var(--blue) 35%,var(--amber) 55%,var(--gold) 70%,var(--red) 85%,var(--rule) 100%);border-radius:1px;}
+.roadmap-iter{display:grid;grid-template-columns:56px 1fr;gap:24px;margin-bottom:22px;position:relative;}
+.iter-marker{display:flex;flex-direction:column;align-items:center;padding-top:4px;}
+.iter-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;border:2px solid;flex-shrink:0;z-index:1;background:var(--paper);}
+.iter-card{border-radius:10px;border:1px solid var(--rule);overflow:hidden;transition:box-shadow .2s,transform .2s;background:var(--paper2);}
+.iter-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.08);transform:translateY(-2px);}
+.iter-card-head{padding:16px 20px 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.iter-phase-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:99px;font-weight:500;white-space:nowrap;flex-shrink:0;}
+.iter-title{font-family:'IBM Plex Sans',serif;font-size:18px;font-weight:500;margin-bottom:3px;line-height:1.2;}
+.iter-subtitle{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;}
+.iter-card-body{padding:0 20px 16px;border-top:1px solid var(--rule);}
+.iter-desc{font-size:13px;color:var(--dim);line-height:1.7;padding-top:10px;}
+.req-chips{display:flex;flex-wrap:wrap;gap:6px;padding-top:12px;padding-bottom:4px;}
+.req-chip{font-size:11.5px;padding:4px 11px;border-radius:5px;background:var(--paper);border:1px solid var(--rule);color:var(--dim);font-family:'IBM Plex Mono',monospace;}
+.req-chip.planned{background:repeating-linear-gradient(135deg,var(--paper) 0 6px,#fff 6px 12px);border-style:dashed;color:var(--amber);}
+
+/* closing / honest edge */
+.closing{background:var(--paper2);border-top:1px solid var(--rule);padding:40px 56px 56px;}
+.cl-inner{max-width:1040px;margin:0 auto;}
+.honest{margin-top:8px;padding:16px 20px;border-left:3px solid var(--amber-mid);background:rgba(232,135,48,.08);border-radius:0 8px 8px 0;}
+.honest p{font-size:13px;color:var(--ink);line-height:1.65;}
+.honest p b{font-weight:600;}
+.honest + .honest{margin-top:14px;}
+
+.footer{max-width:1040px;margin:0 auto;padding:24px 56px 60px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);flex-wrap:wrap;gap:8px;}
+
+@media(max-width:760px){
+  .hero,.section,.closing,.footer{padding-left:22px;padding-right:22px;}
+  .roadmap-iter{grid-template-columns:1fr;}
+  .roadmap-spine{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="grid"></div><div class="glow"></div>
+  <div class="wrap">
+    <div class="eyebrow">Onboarding design · Proposed 30 Jun → shipped 5 Jul</div>
+    <h1>What a new <em>Standard</em>-tier firm clicks through<br>before they reconcile a single client.</h1>
+    <p class="desc">Standard ($79/mo Pro Practice) gets practice-management sync and the per-client <b>"Build cost base history"</b> flow, but <b>not</b> Autopilot's automated multi-client batching. This page was written on 30 Jun as a sequencing <i>proposal</i>; on 5 Jul it shipped in-app as the Build-cost-base worklist — <b>with one deliberate reversal</b>: the push into the return moved from every tier to Premium. The proposal and the pivot are both kept here, because changing a call on new evidence is the job.</p>
+    <span class="tier-tag">Standard tier · Pro Practice</span>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-label">First-run setup, step by step</div>
+  <h2 class="sec-title">Seven steps — shipped as designed, <em>except the one we reversed</em></h2>
+  <p class="sec-sub">Steps 1–3 are bulk and firm-level, run once. Step 4 is per-client and repeats once per new client. Steps 5–7 are ongoing — 6 deliberately is <em>not</em> the build flow, and 7 is where the design changed between proposal and ship.</p>
+
+  <div class="roadmap-track">
+    <div class="roadmap-spine"></div>
+
+    <div class="roadmap-iter">
+      <div class="iter-marker"><div class="iter-dot" style="border-color:var(--teal);color:var(--teal);">01</div></div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div><div class="iter-title">Connect practice manager</div><div class="iter-subtitle">Firm-level · once · already built</div></div>
+          <span class="iter-phase-tag" style="background:var(--teal-light);color:var(--teal);border:1px solid rgba(127,119,221,.25);">PM sync</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">Pick Xero Practice Manager or MYOB AE/AO. One bulk pull brings in every client, family group, job and tax-return status the PM holds — no manual re-entry of names, TFNs, or job assignments.</p>
+          <div class="req-chips">
+            <span class="req-chip">PM_SOURCES (xpm/myob)</span>
+            <span class="req-chip">PRACTICE_SYNC_SEED</span>
+            <span class="req-chip">pmSince freshness tracking</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-iter">
+      <div class="iter-marker"><div class="iter-dot" style="border-color:var(--blue);color:var(--blue);">02</div></div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div><div class="iter-title">Blank portfolios created</div><div class="iter-subtitle">Firm-level · once · already built</div></div>
+          <span class="iter-phase-tag" style="background:var(--blue-light);color:var(--blue);border:1px solid rgba(26,95,168,.25);">Auto-generated</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">Every pulled client gets a portfolio shell — no holdings yet, nothing assumed. The firm sees its full client list in CGTrace immediately, even before a single transaction is reconstructed.</p>
+          <div class="req-chips">
+            <span class="req-chip">holdingIds: []</span>
+            <span class="req-chip">Client Portfolio List</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-iter">
+      <div class="iter-marker"><div class="iter-dot" style="border-color:var(--purple);color:var(--purple);">03</div></div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div><div class="iter-title">Return jobs &amp; status surface</div><div class="iter-subtitle">Firm-level · ongoing · already built</div></div>
+          <span class="iter-phase-tag" style="background:var(--purple-light);color:var(--purple);border:1px solid rgba(90,56,180,.25);">PM sync</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">Job and tax-return context — due dates, assignment, return status — is already inbound from the PM, same trip as step 1. No separate "download return jobs" action needed; it rides along with the sync.</p>
+          <div class="req-chips">
+            <span class="req-chip">PM_JOB_STATUS</span>
+            <span class="req-chip">PM_RETURN_STATUS</span>
+            <span class="req-chip">Tax Obligations view</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-iter">
+      <div class="iter-marker"><div class="iter-dot" style="border-color:var(--amber);color:var(--amber);">04</div></div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div><div class="iter-title">Reconstruct each client, once</div><div class="iter-subtitle">Per client · repeats per new client · already built</div></div>
+          <span class="iter-phase-tag" style="background:var(--amber-light);color:var(--amber);border:1px solid rgba(184,92,10,.25);">⚡ Build cost base history</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">For each synced-but-unbuilt client, the firm runs the AI build once from the worklist: pull that client's own broker history, search a prior-firm workpaper PDF, or fall back to registry data — then review every flagged row before anything commits. One client at a time, by design — this is the Standard-tier ceiling, not a bug. (A pre-filled sample client — the "Build cost base with AI · SAMPLE" walkthrough — shows the full flow end to end without touching real data.)</p>
+          <div class="req-chips">
+            <span class="req-chip">BuildCostBaseFlow worklist</span>
+            <span class="req-chip">Broker API / workpaper / registry</span>
+            <span class="req-chip">Human review gate</span>
+            <span class="req-chip">Build-only, no push</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-iter">
+      <div class="iter-marker"><div class="iter-dot" style="border-color:var(--gold);color:var(--gold);">05</div></div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div><div class="iter-title">Ongoing client sync</div><div class="iter-subtitle">Firm-level · continuous · partly built</div></div>
+          <span class="iter-phase-tag" style="background:var(--gold-light);color:var(--gold);border:1px solid rgba(201,145,26,.3);">PM sync</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">New clients keep flowing in automatically every time the PM re-syncs — that part already works, it's the same mechanism as step 1. Archiving a client's portfolio when the PM shows them leaving the firm does <b>not</b> exist yet — there's no archived/closed-portfolio concept anywhere in the data model today. Scoped as future work, not built this round.</p>
+          <div class="req-chips">
+            <span class="req-chip">New clients: automatic</span>
+            <span class="req-chip planned">Leaver archive: not built</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-iter">
+      <div class="iter-marker"><div class="iter-dot" style="border-color:var(--red);color:var(--red);">06</div></div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div><div class="iter-title">Ongoing reconciliation — not the wizard</div><div class="iter-subtitle">Per client · repeats every period · already built, different tool</div></div>
+          <span class="iter-phase-tag" style="background:var(--red-light);color:var(--red);border:1px solid rgba(192,50,30,.25);">Tracker, not wizard</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">Pulling in <i>new</i> transactions for a client that already exists happens in Portfolio Tracker's "Start new reconciling period" → Download Transactions (API / Import Document) or Manual mode — not by re-running the build. The build flow reconstructs a client's cost-base <i>history</i> once; every reconciliation period after that flows through the Tracker's five-stage workflow.</p>
+          <div class="req-chips">
+            <span class="req-chip">⬇ Download transactions</span>
+            <span class="req-chip">Manual mode (Parcel/Sell/Action)</span>
+            <span class="req-chip">↺ Rollback</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-iter">
+      <div class="iter-marker"><div class="iter-dot" style="border-color:var(--teal);color:var(--teal);">07</div></div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div><div class="iter-title">Push to the return — the step we reversed</div><div class="iter-subtitle">Per return job · Premium action · shipped 5 Jul</div></div>
+          <span class="iter-phase-tag" style="background:var(--teal-light);color:var(--teal);border:1px solid rgba(127,119,221,.25);">Changed between proposal and ship</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">The 30 Jun proposal had the manual "↑ Sync to XPM" push available on every tier, gating only automation. The shipped call is stricter: <b>Standard stops at a built, reviewed cost base plus the audit-trail export</b> — the preparer keys the figure into the return by hand — and the push itself (one-click or Autopilot batch) is the Practice-tier action. That friction is the deliberate upgrade lever, not a limitation we papered over; the Pricing chapter carries the same logic.</p>
+          <div class="req-chips">
+            <span class="req-chip">Standard: export + hand-key</span>
+            <span class="req-chip">Premium: pmPushCGT</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="closing">
+  <div class="cl-inner">
+    <div class="sec-label">Honest edge</div>
+    <div class="honest"><p><b>Proposal → shipped, with one reversal on the record.</b> Written 30 Jun as a sequencing proposal; on 5 Jul the sequence shipped as the in-app Build-cost-base worklist (steps 1–4 now chain as one flow). Step 7 shipped <i>opposite</i> to the proposal — push moved to Premium once pricing work showed the export-vs-push friction was the cleanest upgrade lever. The original call is named, not hidden, in the step card above — reversing a documented decision beats quietly rewriting it.</p></div>
+    <div class="honest"><p><b>Step 5's leaver-archive is the one genuine gap.</b> Everything else above is existing capability, re-sequenced. Archiving a client's portfolio when they leave the firm has no home in the data model yet and would need real design work, not just UI sequencing.</p></div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>CGTRACE · STANDARD TIER · FIRST-RUN SETUP SEQUENCE</span>
+  <span>PROPOSED 30 JUN 2026 · SHIPPED 5 JUL 2026 (PUSH → PREMIUM) · DEMO NARRATIVE</span>
+</div>
+
+<nav style="position:fixed;right:20px;bottom:20px;display:flex;gap:8px;z-index:2000;font-family:'IBM Plex Mono',monospace;">
+  <a href="cgt-portfolio-hub.html" style="padding:9px 15px;border-radius:99px;text-decoration:none;font-size:11px;letter-spacing:.04em;border:1px solid #D5CFEE;background:#FFFFFF;color:#534AB7;box-shadow:0 6px 20px rgba(28,21,64,.18);">← Hub</a>
+  <a href="cgt-pricing.html" style="padding:9px 15px;border-radius:99px;text-decoration:none;font-size:11px;letter-spacing:.04em;border:1px solid #7F77DD;background:#7F77DD;color:#fff;box-shadow:0 6px 20px rgba(127,119,221,.32);">← Back to Pricing</a>
+</nav>
+
+</body>
+</html>

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>CGTrace — Delivery Board</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1C1540;
+  --paper: #FAF9FF;
+  --paper2: #FFFFFF;
+  --rule: #D5CFEE;
+  --rule2: #C5BFEE;
+  --dim: #7A72B0;
+  --muted: #9088C0;
+
+  --teal: #7F77DD;
+  --teal-light: #EEEDFE;
+  --teal-mid: #a78bfa;
+
+  --amber: #b85c0a;
+  --amber-light: #faebd4;
+  --amber-mid: #e88730;
+
+  --red: #c0321e;
+  --red-light: #fdeae7;
+
+  --blue: #1a5fa8;
+  --blue-light: #e4eef9;
+  --blue-mid: #4a8fd4;
+
+  --purple: #5a38b4;
+  --purple-light: #eeebfc;
+  --purple-mid: #8b6edc;
+
+  --gold: #c9911a;
+  --gold-light: #fdf3d8;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 80px 60px 64px;
+  overflow: hidden;
+}
+.hero-grid-lines {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+.hero-accent {
+  position: absolute; top: -120px; right: -80px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(90,56,180,0.28) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-accent2 {
+  position: absolute; bottom: -100px; left: 30%;
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, rgba(184,92,10,0.15) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--teal-mid); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.hero-eyebrow::after { content: ''; flex: 1; max-width: 180px; height: 1px; background: rgba(167,139,250,0.4); }
+.hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(56px, 8vw, 100px); letter-spacing: 0.01em; line-height: 0.92; margin-bottom: 28px; }
+.hero-title span.accent { color: var(--teal-mid); }
+.hero-desc { max-width: 620px; font-size: 16px; line-height: 1.75; color: rgba(245,242,237,0.65); margin-bottom: 32px; }
+.hero-crumb { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 36px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.05em; }
+.crumb-tag { padding: 6px 13px; border-radius: 99px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); color: rgba(245,242,237,0.8); }
+.crumb-tag b { color: var(--teal-mid); font-weight: 500; }
+.crumb-arr { color: rgba(245,242,237,0.3); }
+.hero-stats { display: flex; gap: 0; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; max-width: 640px; }
+.hero-stat { flex: 1; padding: 18px 22px; border-right: 1px solid rgba(255,255,255,0.08); }
+.hero-stat:last-child { border-right: none; }
+.stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 38px; letter-spacing: 0.02em; color: var(--paper); line-height: 1; margin-bottom: 4px; }
+.stat-num span { color: var(--teal-mid); }
+.stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,242,237,0.45); line-height: 1.4; }
+
+/* ── SECTIONS ── */
+.section { padding: 56px 60px; border-bottom: 1px solid var(--rule); }
+.section:last-child { border-bottom: none; }
+.section-tint { background: var(--paper2); }
+.section-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.section-title { font-family: 'IBM Plex Sans', serif; font-size: clamp(26px, 3.6vw, 38px); font-weight: 400; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 8px; }
+.section-title em { font-style: italic; color: var(--dim); }
+.section-sub { font-size: 15px; color: var(--dim); max-width: 660px; line-height: 1.7; margin-bottom: 32px; }
+
+/* ── TRANSLATION CHIPS ── */
+.req-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.req-chip { font-size: 12px; padding: 5px 13px; border-radius: 99px; background: var(--paper2); border: 1px solid var(--rule); color: var(--dim); font-family: 'IBM Plex Mono', monospace; }
+
+/* ── SPRINT PROGRESS STRIP ── */
+.sprint-strip { display: flex; gap: 10px; margin-bottom: 36px; }
+.sprint-pt { flex: 1; border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; background: var(--paper2); position: relative; }
+.sprint-pt-head { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.sprint-pt-count { font-family: 'Bebas Neue', sans-serif; font-size: 26px; line-height: 1; margin-bottom: 4px; }
+.sprint-pt-note { font-size: 11px; color: var(--dim); }
+.sprint-pt::after { content: '→'; position: absolute; right: -19px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; }
+.sprint-pt:last-child::after { content: ''; }
+
+/* ── BACKLOG TIMELINE ── */
+.roadmap-track { position: relative; padding-top: 8px; }
+.roadmap-spine { position: absolute; top: 40px; left: 20px; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--teal) 0%, var(--purple) 55%, var(--rule) 100%); border-radius: 1px; }
+.roadmap-iter { display: grid; grid-template-columns: 56px 1fr; gap: 24px; margin-bottom: 22px; position: relative; }
+.iter-marker { display: flex; flex-direction: column; align-items: center; padding-top: 4px; }
+.iter-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; border: 2px solid; flex-shrink: 0; z-index: 1; background: var(--paper); }
+.iter-card { border-radius: 10px; border: 1px solid var(--rule); overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; }
+.iter-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); transform: translateY(-2px); }
+.iter-card-head { padding: 16px 22px 12px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.iter-phase-tag { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 10px; border-radius: 99px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+.iter-title { font-family: 'IBM Plex Sans', serif; font-size: 19px; font-weight: 400; margin-bottom: 4px; line-height: 1.2; }
+.iter-subtitle { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+.iter-card-body { padding: 0 22px 16px; border-top: 1px solid var(--rule); }
+.iter-desc { font-size: 13px; color: var(--dim); line-height: 1.7; padding-top: 10px; }
+.iter-ref { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); padding-top: 6px; }
+.iter-ref b { color: var(--dim); font-weight: 500; }
+.iter-meta { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 10px; }
+.meta-chip { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 5px; background: var(--paper2); border: 1px solid var(--rule); color: var(--dim); }
+.meta-chip b { color: var(--ink); font-weight: 600; }
+.subtitle-key { color: var(--dim); }
+
+/* ── KANBAN BOARD ── */
+.kanban-grid { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 18px; align-items: start; }
+.kan-col { border-radius: 12px; background: var(--paper2); border: 1px solid var(--rule); min-height: 120px; }
+.kan-col-head { padding: 14px 18px; border-bottom: 2px solid var(--rule); display: flex; align-items: center; justify-content: space-between; }
+.kan-col-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); }
+.kan-col-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); background: var(--rule); padding: 2px 9px; border-radius: 99px; }
+.kan-col-body { padding: 16px; }
+.kan-empty { font-size: 12px; color: var(--muted); font-style: italic; padding: 8px 4px; }
+.kan-card { border-radius: 9px; border: 1px solid var(--rule); border-top: 3px solid var(--rule2); background: var(--paper); padding: 12px 14px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(28,21,64,0.04); }
+.kan-card:last-child { margin-bottom: 0; }
+.kan-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.kan-card-sprint { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; font-weight: 500; }
+.kan-card-num { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); }
+.kan-card-title { font-size: 13.5px; color: var(--ink); font-weight: 500; margin-bottom: 2px; }
+.kan-card-sub { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--muted); letter-spacing: 0.04em; }
+
+/* ── DECISION LOG ── */
+.decision-card { border: 1px solid var(--rule); border-left: 4px solid var(--teal); border-radius: 10px; padding: 24px 28px; margin-bottom: 18px; background: var(--paper2); }
+.d-head { font-family: 'IBM Plex Sans', serif; font-size: 18px; font-weight: 500; margin-bottom: 14px; color: var(--ink); line-height: 1.35; }
+.d-row { display: grid; grid-template-columns: 110px 1fr; gap: 14px; margin-bottom: 9px; }
+.d-row:last-child { margin-bottom: 0; }
+.d-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding-top: 2px; }
+.d-body { font-size: 13.5px; color: var(--dim); line-height: 1.65; }
+
+/* ── INSIGHT BOX ── */
+.insight-box { margin-top: 8px; padding: 24px 28px; background: var(--ink); border-radius: 10px; color: var(--paper); }
+.insight-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(245,242,237,0.35); margin-bottom: 10px; }
+.insight-quote { font-family: 'IBM Plex Sans', serif; font-size: 17px; line-height: 1.65; color: rgba(245,242,237,0.9); font-style: italic; max-width: 760px; }
+
+/* ── CASE STUDY (outside the epic) ── */
+.case-card { border: 1px solid var(--rule); border-left: 4px solid var(--blue); border-radius: 10px; padding: 26px 28px; background: var(--paper); box-shadow: 0 2px 8px rgba(28,21,64,0.04); }
+.case-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); background: var(--blue-light); padding: 4px 12px; border-radius: 99px; margin-bottom: 14px; }
+.case-head { font-family: 'IBM Plex Sans', serif; font-size: 18px; font-weight: 500; margin-bottom: 14px; color: var(--ink); line-height: 1.4; }
+.case-body { font-size: 13.5px; color: var(--dim); line-height: 1.75; }
+.case-details { margin-top: 18px; border-top: 1px solid var(--rule); padding-top: 14px; }
+.case-details summary { cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--blue); list-style: none; }
+.case-details summary::-webkit-details-marker { display: none; }
+.case-details summary::before { content: '▸  '; }
+.case-details[open] summary::before { content: '▾  '; }
+.case-details-body { padding-top: 14px; font-size: 13px; color: var(--dim); line-height: 1.75; }
+
+/* ── FOOTER ── */
+.hero-footer { background: var(--ink); color: rgba(245,242,237,0.35); padding: 24px 60px; display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; border-top: 1px solid rgba(255,255,255,0.06); }
+
+/* ── ANIMATIONS ── */
+.fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 900px) {
+  .kanban-grid { grid-template-columns: 1fr; }
+  .sprint-strip { flex-direction: column; }
+  .sprint-pt::after { display: none; }
+}
+@media (max-width: 768px) {
+  .hero, .section { padding: 48px 24px; }
+  .hero-stats { flex-direction: column; }
+  .hero-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .roadmap-iter { grid-template-columns: 1fr; }
+  .roadmap-spine { display: none; }
+  .d-row { grid-template-columns: 1fr; gap: 2px; }
+  .hero-footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
+<div class="hero">
+  <div class="hero-grid-lines"></div>
+  <div class="hero-accent"></div>
+  <div class="hero-accent2"></div>
+  <div class="hero-eyebrow">Behind the Stage · Chapter 7 of 7</div>
+  <h1 class="hero-title">Delivery <span class="accent">Board</span></h1>
+  <p class="hero-desc">Strategy says what's next. This is how it actually got built — one epic, four sprints, a kanban board, and the prioritization calls behind it, told in both Scrum and SAFe terms.</p>
+  <div class="hero-crumb">
+    <span class="crumb-tag"><b>Epic</b> · Autopilot</span><span class="crumb-arr">→</span>
+    <span class="crumb-tag"><b>7 Features / Stories</b></span><span class="crumb-arr">→</span>
+    <span class="crumb-tag"><b>4 Sprints</b> · 1 Program Increment</span>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="stat-num">7</div><div class="stat-label">Stories in the epic</div></div>
+    <div class="hero-stat"><div class="stat-num"><span>7</span></div><div class="stat-label">Shipped</div></div>
+    <div class="hero-stat"><div class="stat-num">4</div><div class="stat-label">Sprints, 1 PI</div></div>
+    <div class="hero-stat"><div class="stat-num"><span>3</span></div><div class="stat-label">Decisions logged</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ 00 WHY THIS EXISTS ═══════════════════════════════════ -->
+<div class="section section-tint fade-in">
+  <div class="section-label">00 — From Roadmap to Sprint</div>
+  <h2 class="section-title">Chapter 6 compressed Autopilot into <em>one line.</em><br>This is what's behind it.</h2>
+  <p class="section-sub">The roadmap's Iteration 5 names "Autopilot briefing (scripted, 2 scenarios)" as a single shipped chip. One epic, broken into 7 features, delivered across 4 sprints in a single Program Increment, sits underneath that chip.</p>
+  <div class="req-chips">
+    <span class="req-chip">Story = Feature</span>
+    <span class="req-chip">Sprint = Iteration</span>
+    <span class="req-chip">Backlog grooming = WSJF</span>
+    <span class="req-chip">Epic = Epic</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ 01 BACKLOG ═══════════════════════════════════ -->
+<div class="section fade-in">
+  <div class="section-label">01 — Backlog: Epic CGT-200 "Autopilot"</div>
+  <h2 class="section-title">Seven stories,<br><em>four sprints to clear them</em></h2>
+  <p class="section-sub">Every status and sprint below is the real build history, not staged for this page — each card names the actual component or function it shipped as.</p>
+
+  <div class="sprint-strip">
+    <div class="sprint-pt"><div class="sprint-pt-head">Sprint 1</div><div class="sprint-pt-count" style="color:var(--teal);">2</div><div class="sprint-pt-note">Toggle + Advisory briefing</div></div>
+    <div class="sprint-pt"><div class="sprint-pt-head">Sprint 2</div><div class="sprint-pt-count" style="color:var(--amber);">+1</div><div class="sprint-pt-note">Attention Engine v1</div></div>
+    <div class="sprint-pt"><div class="sprint-pt-head">Sprint 3</div><div class="sprint-pt-count" style="color:var(--purple);">+2</div><div class="sprint-pt-note">Multi-client + data fallback</div></div>
+    <div class="sprint-pt"><div class="sprint-pt-head">Sprint 4 · Final</div><div class="sprint-pt-count" style="color:var(--red);">+2 → 7/7</div><div class="sprint-pt-note">Job-match push + Activity log</div></div>
+  </div>
+
+  <div class="roadmap-track">
+    <div class="roadmap-spine"></div>
+
+    <div class="roadmap-iter">
+      <div class="iter-marker"><div class="iter-dot" style="border-color: var(--teal); color: var(--teal);">1</div></div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div><div class="iter-title">Toggle</div><div class="iter-subtitle"><span class="subtitle-key">CGT-201</span> · Story</div></div>
+          <span class="iter-phase-tag" style="background: var(--teal-light); color: var(--teal); border: 1px solid rgba(127,119,221,0.25);">Sprint 1 · Done</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">Assistant ⟷ Autopilot switch in the TopBar — the on/off ramp for everything below it.</p>
+          <p class="iter-ref">Ref: <b>AssistantAutopilotSwitch</b></p>
+          <div class="iter-meta"><span class="meta-chip"><b>3</b> pts</span><span class="meta-chip">WSJF <b>15</b></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-iter">
+      <div class="iter-marker"><div class="iter-dot" style="border-color: var(--teal); color: var(--teal);">2</div></div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div><div class="iter-title">Advisory briefing</div><div class="iter-subtitle"><span class="subtitle-key">CGT-202</span> · Story</div></div>
+          <span class="iter-phase-tag" style="background: var(--teal-light); color: var(--teal); border: 1px solid rgba(127,119,221,0.25);">Sprint 1 · Done</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">A proactive risk-and-opportunity readout the moment a partner opens the dashboard — no question required.</p>
+          <p class="iter-ref">Ref: <b>computeThreats</b>, <b>PROPOSAL_PIPELINE</b></p>
+          <div class="iter-meta"><span class="meta-chip"><b>2</b> pts</span><span class="meta-chip">WSJF <b>18</b></span><span class="meta-chip">cheapest proof · shipped first</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-iter">
+      <div class="iter-marker"><div class="iter-dot" style="border-color: var(--amber); color: var(--amber);">3</div></div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div><div class="iter-title">Attention Engine v1</div><div class="iter-subtitle"><span class="subtitle-key">CGT-203</span> · Story</div></div>
+          <span class="iter-phase-tag" style="background: var(--amber-light); color: var(--amber); border: 1px solid rgba(184,92,10,0.25);">Sprint 2 · Done</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">Spots a client synced with zero transactions, names what it found, and asks permission before acting.</p>
+          <p class="iter-ref">Ref: <b>AutopilotPermissionStep</b></p>
+          <div class="iter-meta"><span class="meta-chip"><b>5</b> pts</span><span class="meta-chip">WSJF <b>13</b></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-iter">
+      <div class="iter-marker"><div class="iter-dot" style="border-color: var(--purple); color: var(--purple);">4</div></div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div><div class="iter-title">Multi-client batching</div><div class="iter-subtitle"><span class="subtitle-key">CGT-204</span> · Story</div></div>
+          <span class="iter-phase-tag" style="background: var(--purple-light); color: var(--purple); border: 1px solid rgba(90,56,180,0.25);">Sprint 3 · Done</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">Runs the same loop across a queue of clients instead of one hardcoded demo client — including a real cross-source contradiction to resolve.</p>
+          <p class="iter-ref">Ref: <b>AUTOPILOT_RECON_SEEDS</b>, <b>handleCommitReconstruction</b></p>
+          <div class="iter-meta"><span class="meta-chip"><b>8</b> pts</span><span class="meta-chip">WSJF <b>11</b></span><span class="meta-chip">flagship</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-iter">
+      <div class="iter-marker"><div class="iter-dot" style="border-color: var(--purple); color: var(--purple);">6</div></div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div><div class="iter-title">Data-source fallback</div><div class="iter-subtitle"><span class="subtitle-key">CGT-206</span> · Story</div></div>
+          <span class="iter-phase-tag" style="background: var(--purple-light); color: var(--purple); border: 1px solid rgba(90,56,180,0.25);">Sprint 3 · Done</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">Searches client documents and falls back to a third-party data provider when no broker feed exists. Pulled forward from its originally-planned last slot — see the decision log below.</p>
+          <p class="iter-ref">Ref: <b>PDF sub-agent</b> → <b>ASX data-provider fallback</b></p>
+          <div class="iter-meta"><span class="meta-chip"><b>5</b> pts</span><span class="meta-chip">WSJF <b>8</b></span><span class="meta-chip">pulled forward past CGT-205 — see log</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-iter">
+      <div class="iter-marker"><div class="iter-dot" style="border-color: var(--red); color: var(--red);">5</div></div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div><div class="iter-title">Job-match → tax push</div><div class="iter-subtitle"><span class="subtitle-key">CGT-205</span> · Story</div></div>
+          <span class="iter-phase-tag" style="background: var(--red-light); color: var(--red); border: 1px solid rgba(192,50,30,0.25);">Sprint 4 · Done</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">Auto-links a finished CGT figure to the outstanding tax-return job it satisfies and pushes it through — a genuine $0 push for the current demo clients, since none have disposals yet, but the chain runs end to end.</p>
+          <p class="iter-ref">Ref: <b>pmPushCGT</b></p>
+          <div class="iter-meta"><span class="meta-chip"><b>5</b> pts</span><span class="meta-chip">WSJF <b>9</b></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-iter">
+      <div class="iter-marker"><div class="iter-dot" style="border-color: var(--red); color: var(--red);">7</div></div>
+      <div class="iter-card">
+        <div class="iter-card-head">
+          <div><div class="iter-title">Activity log</div><div class="iter-subtitle"><span class="subtitle-key">CGT-207</span> · Story</div></div>
+          <span class="iter-phase-tag" style="background: var(--red-light); color: var(--red); border: 1px solid rgba(192,50,30,0.25);">Sprint 4 · Done</span>
+        </div>
+        <div class="iter-card-body">
+          <p class="iter-desc">An audit trail of what Autopilot scanned, proposed, and what a human approved, edited, or rejected — live-only, no pre-seeded fake history.</p>
+          <p class="iter-ref">Ref: <b>ActivityLogModal</b>, <b>logActivity</b></p>
+          <div class="iter-meta"><span class="meta-chip"><b>3</b> pts</span><span class="meta-chip">WSJF <b>6</b></span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <p style="margin-top:8px;font-size:12.5px;color:var(--muted);font-family:'IBM Plex Mono',monospace;">Definition of Done, every story: compiles clean · existing test vectors still pass · math hand-checked against seed data.</p>
+</div>
+
+<!-- ═══════════════════════════════════ 02 KANBAN BOARD ═══════════════════════════════════ -->
+<div class="section section-tint fade-in">
+  <div class="section-label">02 — Sprint Board · PI 1, Final State</div>
+  <h2 class="section-title">The board, <em>cleared</em></h2>
+  <p class="section-sub">Standard three-column board at the end of the PI. Every card carries the sprint it actually shipped in — the imbalance across sprints (2 / 1 / 2 / 2) is real and left visible rather than smoothed out.</p>
+
+  <div class="kanban-grid">
+    <div class="kan-col">
+      <div class="kan-col-head"><span class="kan-col-title">Backlog</span><span class="kan-col-count">0</span></div>
+      <div class="kan-col-body"><div class="kan-empty">Cleared — nothing waiting on this epic.</div></div>
+    </div>
+    <div class="kan-col">
+      <div class="kan-col-head"><span class="kan-col-title">In Progress</span><span class="kan-col-count">0</span></div>
+      <div class="kan-col-body"><div class="kan-empty">Nothing active — see Sprint 1–4 history at left.</div></div>
+    </div>
+    <div class="kan-col">
+      <div class="kan-col-head"><span class="kan-col-title">Done</span><span class="kan-col-count">7</span></div>
+      <div class="kan-col-body">
+        <div class="kan-card" style="border-top-color: var(--teal);">
+          <div class="kan-card-top"><span class="kan-card-sprint" style="background:var(--teal-light);color:var(--teal);">Sprint 1</span><span class="kan-card-num">CGT-201</span></div>
+          <div class="kan-card-title">Toggle</div><div class="kan-card-sub">AssistantAutopilotSwitch</div>
+        </div>
+        <div class="kan-card" style="border-top-color: var(--teal);">
+          <div class="kan-card-top"><span class="kan-card-sprint" style="background:var(--teal-light);color:var(--teal);">Sprint 1</span><span class="kan-card-num">CGT-202</span></div>
+          <div class="kan-card-title">Advisory briefing</div><div class="kan-card-sub">computeThreats</div>
+        </div>
+        <div class="kan-card" style="border-top-color: var(--amber);">
+          <div class="kan-card-top"><span class="kan-card-sprint" style="background:var(--amber-light);color:var(--amber);">Sprint 2</span><span class="kan-card-num">CGT-203</span></div>
+          <div class="kan-card-title">Attention Engine v1</div><div class="kan-card-sub">AutopilotPermissionStep</div>
+        </div>
+        <div class="kan-card" style="border-top-color: var(--purple);">
+          <div class="kan-card-top"><span class="kan-card-sprint" style="background:var(--purple-light);color:var(--purple);">Sprint 3</span><span class="kan-card-num">CGT-204</span></div>
+          <div class="kan-card-title">Multi-client batching</div><div class="kan-card-sub">handleCommitReconstruction</div>
+        </div>
+        <div class="kan-card" style="border-top-color: var(--purple);">
+          <div class="kan-card-top"><span class="kan-card-sprint" style="background:var(--purple-light);color:var(--purple);">Sprint 3</span><span class="kan-card-num">CGT-206</span></div>
+          <div class="kan-card-title">Data-source fallback</div><div class="kan-card-sub">PDF sub-agent fallback</div>
+        </div>
+        <div class="kan-card" style="border-top-color: var(--red);">
+          <div class="kan-card-top"><span class="kan-card-sprint" style="background:var(--red-light);color:var(--red);">Sprint 4</span><span class="kan-card-num">CGT-205</span></div>
+          <div class="kan-card-title">Job-match → tax push</div><div class="kan-card-sub">pmPushCGT</div>
+        </div>
+        <div class="kan-card" style="border-top-color: var(--red);">
+          <div class="kan-card-top"><span class="kan-card-sprint" style="background:var(--red-light);color:var(--red);">Sprint 4</span><span class="kan-card-num">CGT-207</span></div>
+          <div class="kan-card-title">Activity log</div><div class="kan-card-sub">ActivityLogModal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ 03 DECISION LOG ═══════════════════════════════════ -->
+<div class="section fade-in">
+  <div class="section-label">03 — Decision Log</div>
+  <h2 class="section-title">The actual <em>prioritization calls</em></h2>
+  <p class="section-sub">Not just what shipped — which trade-off was chosen, why, and the one call that needed revisiting. A log that only keeps the calls that aged well isn't a real log.</p>
+
+  <div class="decision-card" style="border-left-color: var(--teal);">
+    <div class="d-head">Shipped the cheap proof before the flagship.</div>
+    <div class="d-row"><div class="d-lbl">Why</div><div class="d-body">Story 2 reused data that already existed — lowest job size, real value, fastest way to validate the concept before investing further.</div></div>
+    <div class="d-row"><div class="d-lbl">Trade-off</div><div class="d-body">The more dramatic, multi-client demo (Story 4) shipped two sprints later than originally framed as the flagship.</div></div>
+    <div class="d-row"><div class="d-lbl">Lens</div><div class="d-body">WSJF: low job-size + real value = ship first to de-risk. Scrum: same call, framed as backlog reordering on new information.</div></div>
+  </div>
+
+  <div class="decision-card" style="border-left-color: var(--amber);">
+    <div class="d-head">Pulled "least essential" work forward, against the original plan.</div>
+    <div class="d-row"><div class="d-lbl">Why</div><div class="d-body">Story 6 was scheduled last, but Story 4 needed a credible "no broker record" case to be convincing — a half-finished multi-client story now was worse than a fully-convincing one bundled into the same sprint.</div></div>
+    <div class="d-row"><div class="d-lbl">Trade-off</div><div class="d-body">Story 5 — the originally-planned finale — dropped out of the front of the queue. It still shipped, but in the final sprint, alongside Story 7 rather than as the centerpiece.</div></div>
+  </div>
+
+  <div class="decision-card" style="border-left-color: var(--purple);">
+    <div class="d-head">Shipped a narrow slice to test an idea, then expanded once it worked.</div>
+    <div class="d-row"><div class="d-lbl">Why</div><div class="d-body">Validate whether goal-tagging resonated before investing in a full model that might be the wrong cut.</div></div>
+    <div class="d-row"><div class="d-lbl">Outcome</div><div class="d-body">It validated — the scope later expanded from a 2-item slice to the full set.</div></div>
+    <div class="d-row"><div class="d-lbl">Why it stays</div><div class="d-body">A decision log that only keeps the calls that turned out right on the first try isn't a real log.</div></div>
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-label">Behind the page</div>
+    <p class="insight-quote">"Strategy without a delivery muscle is just a deck. The backlog, the board, and the log above are what turn a roadmap line into shipped software — including the calls that needed revisiting."</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ 04 OPPORTUNITY BACKLOG — DEFERRED ═══════════════════════════════════ -->
+<div class="section fade-in">
+  <div class="section-label">04 — Opportunity Backlog</div>
+  <h2 class="section-title">Considered, and <em>deliberately deferred</em></h2>
+  <p class="section-sub">A raised idea that did <em>not</em> earn a roadmap slot — kept visible with the reasoning, because saying "not yet, and here's why" is the prioritization call that matters most. The original ask was a built-in timesheet/timer for accountants; only half of it survived review.</p>
+
+  <div class="req-chips">
+    <span class="req-chip">Xero WIP</span>
+    <span class="req-chip">Practice-mgmt adjacent</span>
+    <span class="req-chip">Discovery needed</span>
+    <span class="req-chip">Off-wedge</span>
+  </div>
+
+  <div class="decision-card" style="border-left-color: var(--muted);">
+    <div class="d-head">Auto-billing narrative on job completion <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--muted);border:1px solid var(--muted);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:middle;">PARKED</span></div>
+    <div class="d-row"><div class="d-lbl">Idea</div><div class="d-body">On sign-off of a reconciliation, auto-draft the WIP line back to the Xero job — a suggested description and unit estimate ("Cost-base reconciliation · 47 parcels · FY24–25"), ready for the accountant to confirm.</div></div>
+    <div class="d-row"><div class="d-lbl">Why it's tempting</div><div class="d-body">Reinforces the "we live inside your Xero workflow" story and clears a slice of end-of-job admin.</div></div>
+    <div class="d-row"><div class="d-lbl">Why deferred</div><div class="d-body">Off the core wedge (cost-base reconciliation), and it edges into territory XPM's native timer and WIP already own. Rebuilding practice-management billing inside a CGT tool means competing with the platform we integrate with.</div></div>
+    <div class="d-row"><div class="d-lbl">Dropped outright</div><div class="d-body">The "timesheet / timer" half of the original ask — XPM already captures time. Only the billing-narrative half is worth keeping alive.</div></div>
+    <div class="d-row"><div class="d-lbl">Validation gate</div><div class="d-body">Do accountants bill CGT recon as <em>time</em> or as a <em>fixed fee</em>? If fixed-fee, "billing units" is the wrong primitive entirely. Needs discovery before it earns a sprint.</div></div>
+    <div class="d-row"><div class="d-lbl">Constraint if it ships</div><div class="d-body">Suggest-and-confirm only, never auto-commit — a wrong unit count pushed silently into WIP is worse than no feature.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ 05 CASE STUDY — OUTSIDE THE EPIC ═══════════════════════════════════ -->
+<div class="section section-tint fade-in">
+  <div class="section-label">05 — Outside This Epic</div>
+  <h2 class="section-title">Same PO muscle,<br><em>a different backlog</em></h2>
+  <p class="section-sub">Not part of the Autopilot build above — real experience from my current role, included because it's the muscle behind this product's cornerstone integration bet: pushing a reconciled figure into the tax return.</p>
+
+  <div class="req-chips">
+    <span class="req-chip">ATO MST</span>
+    <span class="req-chip">IITR</span>
+    <span class="req-chip">DSP</span>
+    <span class="req-chip">DSP API validation</span>
+  </div>
+
+  <div class="case-card">
+    <span class="case-tag">Case study · ATO return schemas → CGTrace's push-to-return</span>
+    <div class="case-head">The schema literacy behind CGTrace's deepest integration bet</div>
+    <p class="case-body">In my current role I work closely with Business Analysis and Dev on the ATO's IITR and related return schemas for a tax compliance suite — the Message Structure Table and validation-rule set every digital service provider builds returns against. That work is where you learn what the "push a figure into the return" last mile actually costs: the ATO publishes one baseline schema per return type, but each vendor implements it inside its own data model and its own API validation, so a single value has to satisfy three rulebooks at once. And the hard part is never the mandatory fields — it's the conditional-mandatory ones, where the trigger condition lives in another field's value and two careful readers can disagree.</p>
+
+    <details class="case-details">
+      <summary>Why this matters to CGTrace</summary>
+      <p class="case-details-body">CGTrace's push into the Xero return is mocked in this demo — but it's designed by someone who has walked that last mile for real. That's why the push is a mapped field register (ATO label ↔ return field ↔ pushed figure) behind a review gate, not a fire-and-forget API call — and why the scope deliberately stops at the one figure the schema actually needs, written onto the matching return job, rather than pretending a whole return can be round-tripped.</p>
+    </details>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ FOOTER ═══════════════════════════════════ -->
+<div class="hero-footer">
+  <span>CGTrace — Delivery Board · Updated 9 Jul 2026</span>
+  <span>Demo project · Backlog reflects the real Autopilot build, not staged content</span>
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => { entry.target.classList.add('visible'); }, i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+<nav style="position:fixed;right:20px;bottom:20px;display:flex;gap:8px;z-index:2000;font-family:'IBM Plex Mono',monospace;">
+  <a href="cgt-portfolio-hub.html" style="padding:9px 15px;border-radius:99px;text-decoration:none;font-size:11px;letter-spacing:.04em;border:1px solid #D5CFEE;background:#FFFFFF;color:#534AB7;box-shadow:0 6px 20px rgba(28,21,64,.18);">← Hub</a>
+  <a href="cgt-portfolio-hub.html" style="padding:9px 15px;border-radius:99px;text-decoration:none;font-size:11px;letter-spacing:.04em;border:1px solid #7F77DD;background:#7F77DD;color:#fff;box-shadow:0 6px 20px rgba(127,119,221,.32);">Finish ✓ Hub</a>
+</nav>
+</body>
+</html>

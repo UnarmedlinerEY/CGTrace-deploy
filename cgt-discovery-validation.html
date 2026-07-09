@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>CGTrace — From Noise to Niche</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#FAF9FF; --surface:#FFFFFF; --surface2:#FBFAFF; --surface3:#F4F2FE;
+  --ink:#1C1540; --ink2:#2D2845; --muted:#7A72B0; --muted2:#9088C0;
+  --line:#D5CFEE; --line2:#E3DFF6;
+  --primary:#7F77DD; --primary-deep:#534AB7; --bright:#c084fc; --violet:#a78bfa;
+  --green:#34d399; --amber:#fb923c; --slate:#7A72B0; --red:#f87171;
+  --indigo:#1C1540; --indigo2:#231a52;
+}
+body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;font-weight:400;line-height:1.62;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+
+/* hero (indigo band) */
+.hero{background:linear-gradient(165deg,var(--indigo2) 0%,var(--indigo) 72%);color:#fff;padding:56px 40px 48px;position:relative;overflow:hidden;}
+.hero .glow{position:absolute;top:-120px;right:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(127,119,221,.35) 0%,transparent 65%);pointer-events:none;}
+.hero-inner{max-width:1000px;margin:0 auto;position:relative;}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--violet);margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.eyebrow::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.14);}
+.doc-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,8vw,84px);letter-spacing:.02em;line-height:.9;margin-bottom:16px;}
+.doc-title em{font-style:normal;color:var(--bright);}
+.doc-sub{max-width:730px;font-size:17px;line-height:1.7;color:#D5CFF2;}
+.doc-sub b{color:#fff;font-weight:600;}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;}
+.pill{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.06em;color:#CFC9EE;border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:6px 12px;}
+
+.page{max-width:1000px;margin:0 auto;padding:8px 40px 72px;}
+
+.sect{margin-top:54px;}
+.sect-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;}
+.sect-num{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--muted2);}
+.sect-title{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:.03em;color:var(--ink);}
+.sect-lede{font-size:15px;line-height:1.72;color:var(--ink2);max-width:740px;margin-bottom:24px;}
+.sect-lede b{color:var(--ink);font-weight:600;}
+
+/* problem cards */
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.pc{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:18px;box-shadow:0 2px 10px rgba(28,21,64,.04);}
+.pc .tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:99px;display:inline-block;margin-bottom:11px;}
+.tag.sig{color:var(--primary-deep);background:rgba(127,119,221,.13);}
+.tag.noi{color:#9a5b15;background:rgba(251,146,60,.16);}
+.tag.ven{color:var(--slate);background:rgba(122,114,176,.14);}
+.pc p{font-size:13.5px;line-height:1.6;color:var(--ink2);}
+
+/* method */
+.method{display:grid;gap:13px;}
+.mi{display:flex;gap:15px;align-items:flex-start;}
+.mi .ic{flex:0 0 36px;height:36px;border-radius:9px;background:rgba(127,119,221,.13);color:var(--primary-deep);display:flex;align-items:center;justify-content:center;font-weight:600;font-family:'IBM Plex Mono',monospace;font-size:14px;}
+.mi h4{font-size:15.5px;font-weight:600;color:var(--ink);}
+.mi p{font-size:13.5px;color:var(--ink2);margin-top:3px;line-height:1.6;}
+
+/* funnel */
+.funnel{display:flex;flex-direction:column;gap:9px;}
+.frow{display:flex;align-items:center;gap:16px;}
+.fbar{height:54px;border-radius:9px;display:flex;align-items:center;padding:0 18px;color:#fff;font-weight:600;font-size:13px;}
+.fmeta{font-size:12.5px;color:var(--ink2);}
+.fmeta b{color:var(--ink);font-weight:600;}
+
+/* evidence wall */
+.controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:6px 0 16px;}
+.btn{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-radius:99px;padding:8px 14px;border:1px solid var(--line);background:var(--surface);color:var(--muted);transition:all .16s;}
+.btn:hover{border-color:var(--primary);color:var(--primary-deep);}
+.btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+.btn .d{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+.d.sig{background:var(--primary)} .d.noi{background:var(--amber)} .d.ven{background:var(--slate)}
+.counter{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted2);margin-left:auto;}
+.counter b{color:var(--ink);}
+.wall{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:16px 17px;box-shadow:0 2px 10px rgba(28,21,64,.04);transition:opacity .35s,filter .35s,transform .35s;}
+.q.dim{opacity:.2;filter:grayscale(.45);transform:scale(.985);}
+.q .qt{font-style:italic;font-size:15px;line-height:1.5;color:var(--ink);}
+.q .meta{margin-top:11px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.q .ev{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+.q .who{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted2);}
+.minitag{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:99px;}
+.minitag.sig{color:var(--primary-deep);background:rgba(127,119,221,.13)}
+.minitag.noi{color:#9a5b15;background:rgba(251,146,60,.16)}
+.minitag.ven{color:var(--slate);background:rgba(122,114,176,.14)}
+.src{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted2);margin-top:14px;line-height:1.6;}
+.src a{color:var(--primary-deep);}
+
+/* reveal (indigo panel) */
+.reveal{background:linear-gradient(165deg,var(--indigo2) 0%,var(--indigo) 75%);border-radius:16px;padding:34px 32px;color:#fff;position:relative;overflow:hidden;}
+.reveal .glow{position:absolute;bottom:-100px;left:30%;width:340px;height:340px;background:radial-gradient(circle,rgba(192,132,252,.2) 0%,transparent 65%);pointer-events:none;}
+.reveal .eyebrow{color:var(--bright);position:relative;}
+.reveal .eyebrow::after{background:rgba(255,255,255,.14);}
+.reveal h2{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:.02em;margin:12px 0 12px;position:relative;}
+.reveal p{color:#D5CFF2;max-width:730px;font-size:14.5px;line-height:1.72;position:relative;}
+.reveal p b{color:#fff;font-weight:500;}
+.layers{display:grid;gap:9px;margin-top:22px;position:relative;}
+.layer{display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:9px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);}
+.layer .lk{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:5px;white-space:nowrap;}
+.lk.own{background:rgba(255,255,255,.08);color:#CFC9EE;}
+.lk.gap{background:var(--primary);color:#fff;}
+.layer .lt{font-size:13px;color:#DCD7F2;}
+.layer .lt b{color:#fff;font-weight:500;}
+
+/* counter */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.warn{border-left:3px solid var(--amber);background:rgba(251,146,60,.1);border-radius:0 10px 10px 0;padding:15px 18px;}
+.warn h4{font-size:14.5px;font-weight:600;color:#9a5b15;}
+.warn p{font-size:13.5px;color:var(--ink2);margin-top:4px;line-height:1.6;}
+.warn p b{color:var(--ink);font-weight:600;}
+
+/* verdict */
+.verdict{display:flex;gap:14px;align-items:center;background:rgba(127,119,221,.1);border:1px solid rgba(127,119,221,.3);border-radius:11px;padding:17px 20px;}
+.verdict .badge{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;color:#fff;background:var(--primary);padding:7px 13px;border-radius:99px;white-space:nowrap;}
+.verdict p{font-size:14.5px;color:var(--ink2);}
+.verdict p b{color:var(--ink);font-weight:600;}
+.next{margin-top:16px;display:grid;gap:8px;}
+.next li{font-size:14px;color:var(--ink2);list-style:none;padding-left:18px;position:relative;}
+.next li::before{content:"→";position:absolute;left:0;color:var(--primary);}
+.next li b{color:var(--ink);font-weight:600;}
+
+/* craft */
+.craft{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:28px 30px;box-shadow:0 2px 14px rgba(28,21,64,.05);}
+.craft .eyebrow{color:var(--primary-deep);}
+.craft .eyebrow::after{background:var(--line);}
+.craft-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 26px;margin-top:18px;}
+.ct h4{font-size:14.5px;font-weight:600;color:var(--ink);display:flex;gap:8px;}
+.ct h4 .a{color:var(--primary);}
+.ct p{font-size:13px;color:var(--ink2);margin-top:3px;line-height:1.6;}
+
+.footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted2);flex-wrap:wrap;gap:6px;}
+
+@media(max-width:760px){
+  .three,.wall,.two,.craft-grid{grid-template-columns:1fr;}
+  .hero{padding:40px 22px;}
+  .page{padding:8px 22px 60px;}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="glow"></div>
+  <div class="hero-inner">
+    <div class="eyebrow">CGTrace · Discovery ▸ Market Validation</div>
+    <h1 class="doc-title">FROM NOISE TO <em>NICHE</em></h1>
+    <p class="doc-sub">How ~100 sources of public chatter were filtered down to one validated, defensible product wedge — and how I knew when the evidence was strong enough to act on. <b>The hard part wasn't gathering feedback. It was deciding whose feedback to trust.</b></p>
+    <div class="pills">
+      <span class="pill">SEGMENT · AU ACCOUNTING FIRMS</span>
+      <span class="pill">INCUMBENTS · SHARESIGHT / BGL / XERO TAX</span>
+      <span class="pill">WINDOW · 2023→2026</span>
+      <span class="pill">OUTPUT · A GO/NO-GO, NOT A DATA DUMP</span>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- 01 -->
+  <div class="sect">
+    <div class="sect-head"><span class="sect-num">§01</span><h2 class="sect-title">The trap — most "user feedback" is the wrong user</h2></div>
+    <p class="sect-lede">The product is built for <b>accounting firms</b>. But the loudest voices online about CGT tools are <b>DIY investors and SMSF trustees</b>. Count every comment equally and you validate a product for people who'll never buy it. The first job wasn't more data — it was deciding whose voice counts.</p>
+    <div class="three">
+      <div class="pc"><span class="tag noi">Noise</span><p>Individual investors debating which app to use, whether they even need an accountant, platform preferences.</p></div>
+      <div class="pc"><span class="tag sig">Signal</span><p>Accountants describing the work they're forced to redo, and the exact step where client data fails them.</p></div>
+      <div class="pc"><span class="tag ven">Context</span><p>Vendor marketing &amp; feature claims — tested against real voices, never counted as demand.</p></div>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="sect">
+    <div class="sect-head"><span class="sect-num">§02</span><h2 class="sect-title">A discipline for separating signal from noise</h2></div>
+    <p class="sect-lede">Four rules, applied to every data point before it was allowed to influence the conclusion.</p>
+    <div class="method">
+      <div class="mi"><div class="ic">P</div><div><h4>Persona tag, every row</h4><p>FIRM (primary), INVESTOR (secondary signal only), VENDOR (context only). Investor voice never pads the firm-side counts that drive the decision.</p></div></div>
+      <div class="mi"><div class="ic">✓</div><div><h4>Validation status</h4><p>CONFIRMED (dated, attributable, primary quote) · PENDING (incomplete) · ASSUMED (inference). Only CONFIRMED firm-side evidence feeds the go/no-go.</p></div></div>
+      <div class="mi"><div class="ic">⤳</div><div><h4>Challenge the brief</h4><p>The original ask was an even split across channels. I reweighted toward high-density accountant channels — Reddit/reviews are ~90% wrong-persona for a B2B call.</p></div></div>
+      <div class="mi"><div class="ic">◎</div><div><h4>Know when to stop</h4><p>The goal is a decision, not exhaustiveness. I stopped when signal was consistent from both sides of the handoff — flagging commercial uncertainty vs evidence gap.</p></div></div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="sect">
+    <div class="sect-head"><span class="sect-num">§03</span><h2 class="sect-title">~100 sources → a handful of decisive quotes</h2></div>
+    <p class="sect-lede">Volume isn't the deliverable. This is the compression from raw chatter to the evidence that moved the decision.</p>
+    <div class="funnel">
+      <div class="frow"><div class="fbar" style="width:100%;background:#9088C0">~100 scoped sources</div><div class="fmeta"><b>Raw chatter</b> — forums, reviews, body sites, blogs</div></div>
+      <div class="frow"><div class="fbar" style="width:70%;background:var(--amber)">Investor &amp; vendor noise</div><div class="fmeta"><b>Filtered out</b> — consumer-relevant, not firm-buyer relevant</div></div>
+      <div class="frow"><div class="fbar" style="width:42%;background:var(--slate)">Firm-relevant &amp; on-seam</div><div class="fmeta"><b>Tagged &amp; kept</b> — touches the accountant workflow</div></div>
+      <div class="frow"><div class="fbar" style="width:22%;background:var(--primary)">CONFIRMED signal</div><div class="fmeta"><b>Decision-grade</b> — dated, attributable, both sides of the handoff</div></div>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="sect">
+    <div class="sect-head"><span class="sect-num">§04</span><h2 class="sect-title">Filter the signal yourself</h2></div>
+    <p class="sect-lede">Every card is a real, dated public quote. Toggle the personas and watch the noise fall away — what remains is the firm-side signal the decision rests on.</p>
+    <div class="controls">
+      <button class="btn active" data-f="all">All voices</button>
+      <button class="btn" data-f="sig"><span class="d sig"></span>Firm signal</button>
+      <button class="btn" data-f="noi"><span class="d noi"></span>Investor</button>
+      <button class="btn" data-f="ven"><span class="d ven"></span>Vendor</button>
+      <span class="counter" id="counter">Showing <b>10</b> of 10</span>
+    </div>
+    <div class="wall" id="wall">
+      <div class="q" data-p="sig"><div class="qt">"Our job is to verify the information using the actual tax statements, not your reports."</div><div class="meta"><span class="minitag sig">Firm</span><span class="ev">Rejection · Handoff</span><span class="who">Accountant, r/AusFinance · Mar 2026</span></div></div>
+      <div class="q" data-p="sig"><div class="qt">"Accountant here. With ETFs… what you received isn't what's reported in your tax. It's rarely 1:1."</div><div class="meta"><span class="minitag sig">Firm</span><span class="ev">Pain · Complexity</span><span class="who">Accountant, r/AusFinance · Mar 2026</span></div></div>
+      <div class="q" data-p="sig"><div class="qt">"Giving my Ctrl+C and Ctrl+V a good workout today, copying CGT worksheets from one spouse to the other. What a waste of time."</div><div class="meta"><span class="minitag sig">Firm</span><span class="ev">Pain · Rework</span><span class="who">Tax agent, Xero Product Ideas · Nov 2025</span></div></div>
+      <div class="q" data-p="sig"><div class="qt">"The tax statements give a different breakdown compared with EOFY summaries… that's what tax accountants require to complete ITRs."</div><div class="meta"><span class="minitag sig">Firm</span><span class="ev">Gap · Data quality</span><span class="who">Accountant, r/AusFinance · Mar 2026</span></div></div>
+      <div class="q" data-p="sig"><div class="qt">A CGT-worksheet-sharing request sits at 336 votes, unfixed for ~4 years — Xero shelved it again in 2025.</div><div class="meta"><span class="minitag sig">Firm</span><span class="ev">Gap · Incumbent</span><span class="who">Xero Product Ideas · 2022–2026</span></div></div>
+      <div class="q" data-p="noi"><div class="qt">"Why would I pay Sharesight to then pay an accountant?" — after the accountant refused to use his own EOFY calc.</div><div class="meta"><span class="minitag noi">Investor</span><span class="ev">Pain · Handoff (2°)</span><span class="who">r/AusFinance · Mar 2026</span></div></div>
+      <div class="q" data-p="noi"><div class="qt">"With Sharesight you still have to manually check/correct some of that [AMIT] stuff… or at least I had to last year."</div><div class="meta"><span class="minitag noi">Investor</span><span class="ev">Gap · Accuracy (2°)</span><span class="who">r/AusFinance · Jun 2026</span></div></div>
+      <div class="q" data-p="noi"><div class="qt">"Sharesight tries but in my experience the numbers don't match the Vanguard statements, though the totals do."</div><div class="meta"><span class="minitag noi">Investor</span><span class="ev">Gap · Accuracy (2°)</span><span class="who">r/AusFinance · Jun 2026</span></div></div>
+      <div class="q" data-p="noi"><div class="qt">"All of this is either prefilled or easy to see on your ETF provider's statement. Definitely not 'need an accountant' territory."</div><div class="meta"><span class="minitag noi">Investor</span><span class="ev">Counter-signal</span><span class="who">r/AusFinance · May 2026</span></div></div>
+      <div class="q" data-p="ven"><div class="qt">"What could take 3 hours in Excel takes 20 minutes in Sharesight." — Pro plan + Xero add-on marketed to accountants.</div><div class="meta"><span class="minitag ven">Vendor</span><span class="ev">Context · Incumbent</span><span class="who">Sharesight for Accountants</span></div></div>
+    </div>
+    <p class="src">Sources: r/AusFinance threads (May–Jun 2026, Mar 2026) · <a href="https://productideas.xero.com/forums/967127-practice-tools/suggestions/45393562-au-tax-cgt-option-to-copy-and-transfer">Xero Product Ideas — CGT copy &amp; transfer</a> · Sharesight for Accountants. Full evidence log maintained separately.</p>
+  </div>
+
+  <!-- 05 -->
+  <div class="sect">
+    <div class="reveal">
+      <div class="glow"></div>
+      <div class="eyebrow">The Payoff</div>
+      <h2>OWN THE COST-BASE RECONCILIATION, NOT THE TRACKER</h2>
+      <p>The signal converges on one layer. Portfolio tracking is solved and well-liked — Sharesight owns it. The break is at the <b>CGT schedule inside the tax return</b>: accountants won't trust client numbers, re-derive cost base from authoritative registry/AMMA data by hand, and even Sharesight's figures don't reconcile to source. <b>That reconciliation is the unmet, defensible job</b> — and the spine of the whole CGTrace design.</p>
+      <div class="layers">
+        <div class="layer"><span class="lk own">Owned</span><span class="lt"><b>Portfolio tracking &amp; performance</b> — Sharesight wins. Don't rebuild it.</span></div>
+        <div class="layer"><span class="lk own">Partial</span><span class="lt"><b>Tax report generation</b> — exists, but accountants won't rely on it for the return.</span></div>
+        <div class="layer"><span class="lk gap">The wedge</span><span class="lt"><b>Authoritative cost-base / AMIT reconciliation → CGT schedule in the firm's workflow.</b> Unsolved by everyone.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="sect">
+    <div class="sect-head"><span class="sect-num">§06</span><h2 class="sect-title">What would make me wrong</h2></div>
+    <p class="sect-lede">A credible validation names the risks as loudly as the upside. Two things keep this from being a slam-dunk.</p>
+    <div class="two">
+      <div class="warn"><h4>The buyer is the firm, not the investor</h4><p>A loud DIY cohort insists prefill is "good enough," and some balk at even $59/yr. A direct-to-investor play targets a weak, price-sensitive buyer. <b>The commercial signal sits on the firm side</b> — which is why the GTM is firm-first.</p></div>
+      <div class="warn"><h4>The rework is a compliance duty</h4><p>Accountants must verify against source documents by law. A nicer calculator they'd still re-check doesn't clear the bar — the product only removes work if it ingests <b>authoritative registry/AMMA data</b>, which is the hard build.</p></div>
+    </div>
+  </div>
+
+  <!-- 07 -->
+  <div class="sect">
+    <div class="sect-head"><span class="sect-num">§07</span><h2 class="sect-title">The call — and what's next</h2></div>
+    <div class="verdict">
+      <span class="badge">Conditional Go</span>
+      <p>Build-positive on the pain and the wedge — both confirmed in-window from investor <i>and</i> accountant voices. Residual uncertainty is <b>commercial, not evidentiary</b>: will firms pay for authoritative-data integration, and how large is the AU "investor-with-an-accountant" segment?</p>
+    </div>
+    <ul class="next">
+      <li><b>Confidence today:</b> moderate-high on the problem; the handoff stall is corroborated from both sides.</li>
+      <li><b>Next, not more scraping:</b> 6–8 firm interviews to price the reconciliation pain and test willingness to pay.</li>
+      <li><b>De-risk the build:</b> validate access to authoritative registry/AMMA data feeds — the feature that makes the output trustworthy.</li>
+      <li><b>Size the segment:</b> AU individual investors who hold ETFs <i>and</i> use an accountant — the addressable wedge.</li>
+    </ul>
+  </div>
+
+  <!-- 08 -->
+  <div class="sect">
+    <div class="craft">
+      <div class="eyebrow">Behind the stage</div>
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.03em;margin-top:8px;color:var(--ink);">What this demonstrates</h2>
+      <div class="craft-grid">
+        <div class="ct"><h4><span class="a">→</span> Persona rigour</h4><p>Separated buyer from user before counting anything — the difference between validating a B2B product and fooling yourself with B2C noise.</p></div>
+        <div class="ct"><h4><span class="a">→</span> Evidence discipline</h4><p>Confirmed / pending / assumed tagging, with only primary, dated, attributable quotes allowed to move the decision.</p></div>
+        <div class="ct"><h4><span class="a">→</span> Challenging the brief</h4><p>Reweighted the research plan when an even channel split would have produced a wrong-persona answer.</p></div>
+        <div class="ct"><h4><span class="a">→</span> Decision-first thinking</h4><p>Drove to a go/no-go, separated evidence gaps from commercial unknowns, and named what would prove me wrong.</p></div>
+        <div class="ct"><h4><span class="a">→</span> Finding the wedge</h4><p>Resisted "build a better tracker" and isolated the one unsolved layer where a new entrant has room.</p></div>
+        <div class="ct"><h4><span class="a">→</span> Intellectual honesty</h4><p>Surfaced counter-signals and the price-sensitive cohort rather than cherry-picking a clean story.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>CGTRACE · DISCOVERY → VALIDATION</span>
+    <span>JUNE 2026 · PUBLIC SOURCES 2023–2026 · GENERAL IN NATURE</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  var wall=document.getElementById('wall');
+  var cards=[].slice.call(wall.querySelectorAll('.q'));
+  var btns=[].slice.call(document.querySelectorAll('.btn'));
+  var counter=document.getElementById('counter'), total=cards.length;
+  function apply(f){
+    var shown=0;
+    cards.forEach(function(c){
+      var m=(f==='all')||(c.getAttribute('data-p')===f);
+      c.classList.toggle('dim',!m); if(m)shown++;
+    });
+    counter.innerHTML='Showing <b>'+shown+'</b> of '+total;
+  }
+  btns.forEach(function(b){ b.addEventListener('click',function(){
+    btns.forEach(function(x){x.classList.remove('active');}); b.classList.add('active');
+    apply(b.getAttribute('data-f'));
+  });});
+})();
+</script>
+<nav style="position:fixed;right:20px;bottom:20px;display:flex;gap:8px;z-index:2000;font-family:'IBM Plex Mono',monospace;">
+  <a href="cgt-portfolio-hub.html" style="padding:9px 15px;border-radius:99px;text-decoration:none;font-size:11px;letter-spacing:.04em;border:1px solid #D5CFEE;background:#FFFFFF;color:#534AB7;box-shadow:0 6px 20px rgba(28,21,64,.18);">← Hub</a>
+  <a href="cgt-positioning-matrix.html" style="padding:9px 15px;border-radius:99px;text-decoration:none;font-size:11px;letter-spacing:.04em;border:1px solid #7F77DD;background:#7F77DD;color:#fff;box-shadow:0 6px 20px rgba(127,119,221,.32);">Next: Positioning →</a>
+</nav>
+</body>
+</html>

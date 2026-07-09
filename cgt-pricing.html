@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>CGTrace — Pricing Strategy</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#1C1540; --paper:#FAF9FF; --paper2:#FFFFFF; --paper3:#F4F2FE;
+  --rule:#D5CFEE; --rule2:#C5BFEE; --dim:#7A72B0; --muted:#9088C0;
+  --teal:#7F77DD; --teal-lt:#EEEDFE; --teal-mid:#a78bfa; --teal-glow:rgba(127,119,221,0.12);
+  --amber:#c06010; --amber-lt:#faecd4; --amber-mid:#e8882a;
+  --blue:#1858a2; --blue-lt:#e2edf8; --blue-mid:#4488d0;
+  --red:#c03020; --red-lt:#fce8e5;
+  --gold:#b8880a; --gold-lt:#fdf3d4;
+}
+
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.6;}
+
+/* PAGE */
+.page{max-width:1060px;margin:0 auto;padding:56px 48px 88px;}
+
+/* HEADER */
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:flex;align-items:center;gap:14px;}
+.eyebrow::after{content:'';flex:1;max-width:160px;height:1px;background:rgba(127,119,221,0.25);}
+.doc-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,6vw,72px);letter-spacing:.02em;line-height:.95;margin-bottom:14px;}
+.doc-title span{color:var(--teal);}
+.doc-sub{font-size:14px;color:var(--dim);max-width:600px;line-height:1.75;margin-bottom:52px;}
+
+/* BILLING TOGGLE */
+.toggle-row{display:flex;align-items:center;gap:14px;margin-bottom:40px;}
+.toggle-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+.toggle{position:relative;width:44px;height:24px;cursor:pointer;}
+.toggle input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:var(--rule2);border-radius:99px;transition:background .2s;}
+.toggle input:checked~.toggle-track{background:var(--teal);}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;background:white;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:transform .2s;}
+.toggle input:checked~.toggle-thumb{transform:translateX(20px);}
+.save-badge{background:var(--teal-lt);color:var(--teal);border:1px solid rgba(127,119,221,.25);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:2px 9px;border-radius:99px;font-weight:500;}
+
+/* TIER GRID */
+.tiers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1.5px solid var(--rule2);border-radius:14px;overflow:hidden;margin-bottom:48px;}
+
+.tier{padding:32px 28px;border-right:1px solid var(--rule2);position:relative;display:flex;flex-direction:column;background:white;}
+.tier:last-child{border-right:none;}
+.tier.featured{background:var(--ink);color:var(--paper);}
+.tier.featured .tier-sub{color:rgba(245,242,236,.5);}
+.tier.featured .tier-price-label{color:rgba(245,242,236,.45);}
+.tier.featured .section-divider{background:rgba(255,255,255,.08);}
+.tier.featured .pro-label{color:rgba(15,184,148,.9);}
+.tier.featured .con-label{color:rgba(232,136,42,.85);}
+.tier.featured .feature-item{color:rgba(245,242,236,.7);}
+.tier.featured .feature-item.no{color:rgba(245,242,236,.3);}
+.tier.featured .rationale-text{color:rgba(245,242,236,.6);}
+.tier.featured .tag{background:rgba(255,255,255,.08);color:rgba(245,242,236,.5);}
+
+.featured-badge{position:absolute;top:0;left:50%;transform:translateX(-50%);background:var(--teal);color:white;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:3px 14px;border-radius:0 0 8px 8px;}
+
+.tier-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;margin-top:8px;}
+.tier.featured .tier-tag{color:var(--teal-mid);}
+
+.tier-name{font-family:'IBM Plex Sans',serif;font-size:26px;font-weight:400;margin-bottom:4px;}
+.tier-sub{font-size:12.5px;color:var(--dim);margin-bottom:22px;line-height:1.5;}
+
+.tier-price{font-family:'Bebas Neue',sans-serif;font-size:58px;line-height:1;letter-spacing:.01em;margin-bottom:2px;}
+.tier-price sup{font-family:'IBM Plex Sans',sans-serif;font-size:20px;font-weight:500;vertical-align:super;line-height:1;}
+.tier-price .price-val{transition:opacity .15s;}
+.tier-price-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;margin-bottom:22px;}
+
+.cta-btn{display:block;width:100%;padding:11px 0;border-radius:7px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:500;text-align:center;cursor:pointer;border:1.5px solid;margin-bottom:24px;transition:opacity .15s;text-decoration:none;}
+.cta-btn:hover{opacity:.78;}
+.cta-primary{background:var(--teal);border-color:var(--teal);color:white;}
+.cta-outline{background:transparent;border-color:var(--rule2);color:var(--dim);}
+.cta-dark{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:rgba(245,242,236,.9);}
+
+.section-divider{height:1px;background:var(--rule);margin:18px 0;}
+
+/* FEATURE LIST */
+.feature-list{flex:1;margin-bottom:20px;}
+.feature-item{display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:12.5px;color:var(--dim);line-height:1.55;}
+.feature-item.no{color:var(--muted);}
+.fi-icon{flex-shrink:0;font-size:11px;margin-top:2px;width:14px;text-align:center;}
+
+/* PRO / CON */
+.rationale{margin-top:auto;}
+.rationale-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.tier.featured .rationale-label{color:rgba(154,148,136,.55);}
+.pro-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);font-weight:500;margin-bottom:5px;margin-top:10px;}
+.con-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);font-weight:500;margin-bottom:5px;margin-top:8px;}
+.rationale-item{display:flex;gap:7px;align-items:flex-start;font-size:11.5px;padding:3px 0;line-height:1.55;}
+.rationale-text{color:var(--dim);}
+.ri-dot{flex-shrink:0;width:5px;height:5px;border-radius:50%;margin-top:5px;}
+.ri-dot.pro{background:var(--teal);}
+.ri-dot.con{background:var(--amber);}
+
+.tag{display:inline-flex;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:9px;background:var(--paper2);color:var(--muted);border:1px solid var(--rule);margin-right:3px;margin-top:4px;}
+
+/* ANCHOR CALLOUT */
+.anchor-strip{background:var(--ink);border-radius:12px;padding:32px 36px;margin-bottom:48px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;}
+.anchor-item{}
+.anchor-num{font-family:'Bebas Neue',sans-serif;font-size:42px;line-height:1;margin-bottom:4px;}
+.anchor-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(154,148,136,.5);margin-bottom:6px;}
+.anchor-desc{font-size:12.5px;color:rgba(245,242,236,.6);line-height:1.65;}
+.anchor-desc strong{color:rgba(245,242,236,.9);font-weight:500;}
+
+/* COMPARISON TABLE */
+.comp-section-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.comp-title{font-family:'IBM Plex Sans',serif;font-size:clamp(22px,3vw,32px);font-weight:400;margin-bottom:8px;letter-spacing:-.01em;}
+.comp-title em{font-style:italic;color:var(--dim);}
+.comp-sub{font-size:13.5px;color:var(--dim);line-height:1.7;max-width:600px;margin-bottom:28px;}
+
+.comp-table{width:100%;border-collapse:collapse;font-size:12.5px;border:1.5px solid var(--rule2);border-radius:12px;overflow:hidden;}
+.comp-table th{padding:12px 16px;text-align:left;background:var(--ink);color:rgba(245,242,236,.45);font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:400;}
+.comp-table th.us{color:var(--teal-mid);}
+.comp-table th.them{color:rgba(245,242,236,.35);}
+.comp-table td{padding:12px 16px;border-bottom:1px solid var(--rule);color:var(--dim);vertical-align:middle;line-height:1.55;}
+.comp-table td:first-child{font-weight:500;color:var(--ink);font-size:12px;}
+.comp-table tr:last-child td{border-bottom:none;}
+.comp-table tr:hover td{background:var(--paper2);}
+.comp-table td.win{color:var(--teal);font-weight:500;}
+.comp-table td.lose{color:var(--muted);}
+.comp-table td.partial{color:var(--amber);}
+
+.check{color:var(--teal);font-size:14px;}
+.cross{color:var(--rule2);font-size:15px;}
+.part{color:var(--amber);font-size:13px;}
+
+/* INSIGHT ROW */
+.insight-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px;}
+.ins-card{background:white;border:1px solid var(--rule2);border-radius:10px;padding:20px 20px;}
+.ins-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.ins-body{font-size:12.5px;color:var(--dim);line-height:1.7;}
+.ins-body strong{color:var(--ink);font-weight:500;}
+
+/* FOOTER */
+.footer{margin-top:52px;padding-top:20px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);flex-wrap:wrap;gap:6px;}
+
+@media(max-width:760px){
+  .page{padding:32px 20px 60px;}
+  .tiers{grid-template-columns:1fr;}
+  .tier{border-right:none;border-bottom:1px solid var(--rule2);}
+  .anchor-strip{grid-template-columns:1fr;}
+  .insight-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="eyebrow">Pricing Strategy &nbsp;·&nbsp; CGTrace</div>
+  <h1 class="doc-title">SIMPLE PRICING.<br><span>CLEAR VALUE.</span></h1>
+  <p class="doc-sub">Tiered by portfolio volume and automation depth — not by transaction count or parcel complexity. Priced against the write-off time it replaces, not against software budgets.</p>
+
+  <!-- BILLING TOGGLE -->
+  <div class="toggle-row">
+    <span class="toggle-label">Monthly</span>
+    <label class="toggle">
+      <input type="checkbox" id="billingToggle" onchange="switchBilling()">
+      <div class="toggle-track"></div>
+      <div class="toggle-thumb"></div>
+    </label>
+    <span class="toggle-label">Annual</span>
+    <span class="save-badge">Save 2 months</span>
+  </div>
+
+  <!-- TIER CARDS -->
+  <div class="tiers">
+
+    <!-- FREE -->
+    <div class="tier">
+      <div class="tier-tag">Tier 01</div>
+      <div class="tier-name">Solo Investor</div>
+      <div class="tier-sub">Self-directed retail investors &amp; DIY SMSF</div>
+      <div class="tier-price"><sup>$</sup><span class="price-val" data-monthly="0" data-annual="0">0</span></div>
+      <div class="tier-price-label">Free forever</div>
+      <a class="cta-btn cta-outline">Get started free</a>
+
+      <div class="feature-list">
+        <div class="feature-item"><span class="fi-icon">✓</span>Up to 3 portfolios</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>Up to 20 parcels per portfolio</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>Basic CGT gain / loss summary</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>50% discount eligibility flag</div>
+        <div class="feature-item no"><span class="fi-icon" style="color:var(--rule2);">✗</span>Corporate action engine</div>
+        <div class="feature-item no"><span class="fi-icon" style="color:var(--rule2);">✗</span>AMMA / AMIT processing</div>
+        <div class="feature-item no"><span class="fi-icon" style="color:var(--rule2);">✗</span>ATO audit trail export</div>
+        <div class="feature-item no"><span class="fi-icon" style="color:var(--rule2);">✗</span>Multi-client management</div>
+      </div>
+
+      <div class="section-divider"></div>
+      <div class="rationale">
+        <div class="rationale-label">Rationale</div>
+        <div class="pro-label">Pros</div>
+        <div class="rationale-item"><div class="ri-dot pro"></div><div class="rationale-text">Lowers acquisition barrier — retail users enter without a payment decision</div></div>
+        <div class="rationale-item"><div class="ri-dot pro"></div><div class="rationale-text">Becomes a referral channel — satisfied users recommend to their accountant (the Pro buyer)</div></div>
+        <div class="rationale-item"><div class="ri-dot pro"></div><div class="rationale-text">Mirrors Sharesight's proven freemium conversion model in ANZ market</div></div>
+        <div class="con-label">Cons</div>
+        <div class="rationale-item"><div class="ri-dot con"></div><div class="rationale-text">Zero revenue per user — requires conversion to justify infrastructure cost</div></div>
+        <div class="rationale-item"><div class="ri-dot con"></div><div class="rationale-text">Cap of 20 parcels may frustrate long-term investors with complex holdings before they hit a paywall</div></div>
+      </div>
+    </div>
+
+    <!-- PRO — FEATURED -->
+    <div class="tier featured">
+      <div class="featured-badge">Most popular</div>
+      <div class="tier-tag">Tier 02</div>
+      <div class="tier-name">Pro Practice</div>
+      <div class="tier-sub">Small–mid accounting firms, 10–50 client portfolios</div>
+      <div class="tier-price"><sup>$</sup><span class="price-val" data-monthly="79" data-annual="66">79</span></div>
+      <div class="tier-price-label">per firm / month</div>
+      <a class="cta-btn cta-primary">Start 30-day trial</a>
+
+      <div class="feature-list">
+        <div class="feature-item"><span class="fi-icon">✓</span>Up to 25 client portfolios</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>Unlimited parcels per portfolio</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>Full corporate action engine (all 14 origin types)</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>AMMA / AMIT annual processing</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>ATO audit trail export (PDF + CSV)</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>Indexation method (pre-1999 assets)</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>2 user seats per firm</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>Build cost base with AI — single client, manual reconstruction &amp; review</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>One-way XPM / MYOB sync — auto-pull clients &amp; jobs</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>Reviewed CGT figure + audit trail — export (PDF / CSV) to key into the return manually</div>
+        <div class="feature-item no" style="color:rgba(245,242,236,.3);"><span class="fi-icon" style="color:rgba(255,255,255,.15);">✗</span>CGT push to Xero Tax return &amp; CGT schedule (one-click / batch)</div>
+        <div class="feature-item no" style="color:rgba(245,242,236,.3);"><span class="fi-icon" style="color:rgba(255,255,255,.15);">✗</span>Autopilot — automated multi-client reconciliation &amp; sync</div>
+        <div class="feature-item no" style="color:rgba(245,242,236,.3);"><span class="fi-icon" style="color:rgba(255,255,255,.15);">✗</span>Broker feed integrations</div>
+        <div class="feature-item no" style="color:rgba(245,242,236,.3);"><span class="fi-icon" style="color:rgba(255,255,255,.15);">✗</span>Client-facing portal</div>
+      </div>
+
+      <a href="cgt-standard-onboarding.html" style="display:block;margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--teal-mid);text-decoration:none;">→ See the first-run setup sequence</a>
+
+      <div class="section-divider"></div>
+      <div class="rationale">
+        <div class="rationale-label">Rationale</div>
+        <div class="pro-label">Pros</div>
+        <div class="rationale-item"><div class="ri-dot pro"></div><div class="rationale-text">$79/month = $3.16 per client for 25 portfolios — far below one hour of accountant write-off time ($250+)</div></div>
+        <div class="rationale-item"><div class="ri-dot pro"></div><div class="rationale-text">Full engine access converts the tool from a tracker to a billable workflow — embeds deeply</div></div>
+        <div class="rationale-item"><div class="ri-dot pro"></div><div class="rationale-text">Per-firm pricing (not per-user) removes friction for small practices sharing access</div></div>
+        <div class="con-label">Cons</div>
+        <div class="rationale-item"><div class="ri-dot con"></div><div class="rationale-text">25-portfolio cap may feel restrictive for fast-growing practices — creates upgrade pressure (feature, not flaw)</div></div>
+        <div class="rationale-item"><div class="ri-dot con"></div><div class="rationale-text">No broker feeds means some manual data entry remains — reduces stickiness vs Practice tier</div></div>
+        <div class="rationale-item"><div class="ri-dot con"></div><div class="rationale-text">Standard stops at a reviewed CGT figure + export — the preparer still keys it into the return by hand. That friction is the deliberate upgrade lever to Practice's one-click push (not punitive: the audit-trail export is always included)</div></div>
+      </div>
+    </div>
+
+    <!-- PRACTICE -->
+    <div class="tier">
+      <div class="tier-tag">Tier 03</div>
+      <div class="tier-name">Practice <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;color:var(--amber-mid);background:var(--amber-lt);border:1px solid rgba(192,96,16,.25);border-radius:99px;padding:2px 9px;vertical-align:middle;margin-left:6px;">⚡ Autopilot</span></div>
+      <div class="tier-sub">Established firms, 50–200+ client portfolios</div>
+      <div class="tier-price"><sup>$</sup><span class="price-val" data-monthly="199" data-annual="166">199</span></div>
+      <div class="tier-price-label">per firm / month</div>
+      <a class="cta-btn cta-outline">Book a demo</a>
+
+      <div class="feature-list">
+        <div class="feature-item"><span class="fi-icon">✓</span>Unlimited client portfolios</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>Everything in Pro Practice</div>
+        <div class="feature-item"><span class="fi-icon">✓</span><strong style="color:var(--ink);">Autopilot</strong> — AI reconciles across your whole client list, with built-in review gates (HITL)</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>CGT push to Xero Tax return &amp; CGT schedule — batch-push all reconciled, or per-portfolio as you review</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>Bulk corporate action processing</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>Broker API feed integrations (CommSec, nabtrade, Selfwealth)</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>White-label client portal</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>Unlimited user seats</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>Priority support + onboarding</div>
+        <div class="feature-item"><span class="fi-icon">✓</span>CGT schedule bulk export (ATO-ready)</div>
+      </div>
+
+      <div class="section-divider"></div>
+      <div class="rationale">
+        <div class="rationale-label">Rationale</div>
+        <div class="pro-label">Pros</div>
+        <div class="rationale-item"><div class="ri-dot pro"></div><div class="rationale-text">Autopilot is the clearest upgrade hook from Pro Practice — same AI reconstruction engine, but it runs across every client at once — plus the push into the return that Standard withholds — with built-in review gates instead of one client at a time</div></div>
+        <div class="rationale-item"><div class="ri-dot pro"></div><div class="rationale-text">Broker feeds make this genuinely sticky — data flows in automatically, manual entry becomes exception not rule</div></div>
+        <div class="rationale-item"><div class="ri-dot pro"></div><div class="rationale-text">$199/month is significantly below Class Super pricing while requiring no implementation project</div></div>
+        <div class="rationale-item"><div class="ri-dot pro"></div><div class="rationale-text">Client portal creates a billable value-add — firms can charge clients for CGT reporting access</div></div>
+        <div class="con-label">Cons</div>
+        <div class="rationale-item"><div class="ri-dot con"></div><div class="rationale-text">Even with built-in review gates and the Activity Log audit trail, risk-averse partners will want the per-portfolio review mode (not batch) as the default until they trust the engine — expose that choice up front, don't bury it</div></div>
+        <div class="rationale-item"><div class="ri-dot con"></div><div class="rationale-text">Broker feed integrations are expensive to build and maintain — each feed requires a commercial relationship</div></div>
+        <div class="rationale-item"><div class="ri-dot con"></div><div class="rationale-text">At this tier, firms may start comparing against BGL / Class Super — need clear differentiation on setup simplicity</div></div>
+      </div>
+    </div>
+
+  </div><!-- /tiers -->
+
+  <!-- ADVISORY ADD-ON -->
+  <div style="border:1.5px solid var(--rule2);border-radius:12px;padding:28px 32px;margin-bottom:48px;background:var(--paper3);display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:260px;">
+      <div class="tier-tag" style="margin-top:0;">Add-on · Built, not yet priced</div>
+      <div class="tier-name" style="font-size:20px;">CGTrace Advisory</div>
+      <div class="tier-sub" style="margin-bottom:0;">Stacks on Pro Practice or Practice. Group-level vitals, an opportunity ranker, and a scoped-engagement upsell flow — for firms pivoting to advisory as a growth line, not every Compliance buyer.</div>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);text-align:right;">Pricing — to be scoped<br><span style="color:var(--muted);font-size:9.5px;">Pitched per engagement until firm interviews validate willingness to pay</span></div>
+  </div>
+
+  <!-- ANCHOR CALLOUT -->
+  <div class="anchor-strip">
+    <div class="anchor-item">
+      <div class="anchor-label">The value anchor</div>
+      <div class="anchor-num" style="color:var(--teal-mid);">$250<span style="font-family:'IBM Plex Sans',sans-serif;font-size:16px;font-weight:400;">/hr</span></div>
+      <div class="anchor-desc">Average AU accountant billing rate. <strong>3 hours reconstructing one DRP parcel history = $750 write-off risk per client.</strong> Pro tier costs $3.16 per client per month.</div>
+    </div>
+    <div class="anchor-item">
+      <div class="anchor-label">Break-even point</div>
+      <div class="anchor-num" style="color:var(--amber-mid);">19<span style="font-family:'IBM Plex Sans',sans-serif;font-size:16px;font-weight:400;">min</span></div>
+      <div class="anchor-desc">Time saved per client per year needed to justify the Pro tier cost. <strong>If the tool saves one manual CGT lookup per client, it pays for itself in the first week of tax season.</strong></div>
+    </div>
+    <div class="anchor-item">
+      <div class="anchor-label">Year-one revenue target</div>
+      <div class="anchor-num" style="color:var(--blue-mid);">$95k</div>
+      <div class="anchor-desc">50 Pro firms × $79/month × 12 months. <strong>Achievable beachhead before any Practice tier conversion or annual billing uplift.</strong> Conservative — does not include retail upsell.</div>
+    </div>
+  </div>
+
+  <!-- COMPETITOR COMPARISON -->
+  <div style="margin-bottom:12px;">
+    <div class="comp-section-label">Competitor comparison</div>
+    <h2 class="comp-title">CGTrace vs <em>Sharesight</em></h2>
+    <p class="comp-sub">Sharesight is the most direct comparable — the only ANZ platform with a similar freemium model. The comparison shows where CGTrace is categorically better, where it trades off, and where it is honestly weaker at launch.</p>
+  </div>
+
+  <div style="border:1.5px solid var(--rule2);border-radius:12px;overflow:hidden;margin-bottom:20px;">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th style="width:28%;">Dimension</th>
+          <th class="us" style="width:36%;">✦ CGTrace</th>
+          <th class="them" style="width:36%;">Sharesight</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Free tier limit</td>
+          <td class="win">3 portfolios · 20 parcels each</td>
+          <td>10 holdings · 1 portfolio</td>
+        </tr>
+        <tr>
+          <td>Pro / paid entry price</td>
+          <td class="win">$79/month per firm (25 portfolios)</td>
+          <td>$49/month (Investor) — single user, no firm view</td>
+        </tr>
+        <tr>
+          <td>Target user</td>
+          <td class="win">Accounting firm managing client portfolios</td>
+          <td class="lose">Self-directed retail investor</td>
+        </tr>
+        <tr>
+          <td>Corporate action engine</td>
+          <td class="win">All 14 origin types · ATO-correct rules · audit trail</td>
+          <td class="partial">Automated for splits / DRP · limited demerger depth · no class ruling linkage</td>
+        </tr>
+        <tr>
+          <td>AMMA / AMIT processing</td>
+          <td class="win">Per parcel, per FY · conservation check</td>
+          <td class="partial">Basic ETF support · no AMMA-level granularity</td>
+        </tr>
+        <tr>
+          <td>ATO audit trail</td>
+          <td class="win">Every figure source-traced · PDF export</td>
+          <td class="lose">Not provided — reporting only</td>
+        </tr>
+        <tr>
+          <td>Multi-client management</td>
+          <td class="win">Native — firm manages all client portfolios in one view</td>
+          <td class="lose">Not designed for this — separate logins per client</td>
+        </tr>
+        <tr>
+          <td>Automated reconciliation</td>
+          <td class="win">Autopilot (Practice tier) — AI reconciles &amp; pushes across all clients, with built-in review gates (batch or per-portfolio)</td>
+          <td class="lose">Not offered — every portfolio is reviewed manually</td>
+        </tr>
+        <tr>
+          <td>Pre-1999 indexation method</td>
+          <td class="win">Full indexation calculation with CPI reference</td>
+          <td class="lose">Not supported</td>
+        </tr>
+        <tr>
+          <td>BSP / Bonus Share Plan</td>
+          <td class="win">Correct s. 6BA treatment · class ruling register</td>
+          <td class="lose">Conflated with DRP — incorrect cost base</td>
+        </tr>
+        <tr>
+          <td>Broker integrations</td>
+          <td class="partial">Phase 3 roadmap — not at launch</td>
+          <td class="win">240+ broker API connections · strong at launch</td>
+        </tr>
+        <tr>
+          <td>Securities coverage</td>
+          <td class="partial">ASX-focused at launch · international roadmap</td>
+          <td class="win">700,000+ global securities · 60+ exchanges</td>
+        </tr>
+        <tr>
+          <td>Setup time</td>
+          <td class="win">Days — no implementation project</td>
+          <td class="win">Hours — consumer-grade onboarding</td>
+        </tr>
+        <tr>
+          <td>Mobile app</td>
+          <td class="partial">Responsive web · no native app at launch</td>
+          <td class="win">iOS + Android native apps</td>
+        </tr>
+        <tr>
+          <td>Annual billing discount</td>
+          <td class="win">2 months free (17% saving)</td>
+          <td>10–15% annual saving</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- INSIGHT ROW -->
+  <div class="insight-row">
+    <div class="ins-card" style="border-color:rgba(127,119,221,.25);background:var(--teal-lt);">
+      <div class="ins-label" style="color:var(--teal);">Where CGTrace wins</div>
+      <div class="ins-body">Sharesight is built for investors, not accountants. It has no multi-client firm view, no ATO audit trail, and its corporate action engine lacks the depth required for compliance-grade output. <strong>Every dimension that matters to an accounting firm is a CGTrace advantage.</strong></div>
+    </div>
+    <div class="ins-card" style="border-color:rgba(192,96,16,.2);background:var(--amber-lt);">
+      <div class="ins-label" style="color:var(--amber);">Where Sharesight wins — for now</div>
+      <div class="ins-body">Broker integrations and securities coverage are real gaps at launch. Sharesight has 240+ broker APIs and 700k+ securities built over a decade. <strong>These are Phase 2–3 investments — not year-one blockers for the accounting firm segment, who onboard client data manually anyway.</strong></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>CGTrace — Pricing Strategy · Updated 30 Jun 2026</span>
+    <span>Prices in AUD · General in nature · Subject to change</span>
+  </div>
+
+</div>
+
+<script>
+let isAnnual = false;
+function switchBilling() {
+  isAnnual = document.getElementById('billingToggle').checked;
+  document.querySelectorAll('.price-val').forEach(el => {
+    const m = parseInt(el.dataset.monthly);
+    const a = parseInt(el.dataset.annual);
+    const val = isAnnual ? a : m;
+    el.textContent = val === 0 ? '0' : val.toLocaleString();
+  });
+  document.querySelectorAll('.tier-price-label').forEach((el, i) => {
+    if (i === 0) { el.textContent = 'Free forever'; return; }
+    el.textContent = isAnnual ? 'per firm / month, billed annually' : 'per firm / month';
+  });
+}
+</script>
+<nav style="position:fixed;right:20px;bottom:20px;display:flex;gap:8px;z-index:2000;font-family:'IBM Plex Mono',monospace;">
+  <a href="cgt-portfolio-hub.html" style="padding:9px 15px;border-radius:99px;text-decoration:none;font-size:11px;letter-spacing:.04em;border:1px solid #D5CFEE;background:#FFFFFF;color:#534AB7;box-shadow:0 6px 20px rgba(28,21,64,.18);">← Hub</a>
+  <a href="cgt-roadmap.html" style="padding:9px 15px;border-radius:99px;text-decoration:none;font-size:11px;letter-spacing:.04em;border:1px solid #7F77DD;background:#7F77DD;color:#fff;box-shadow:0 6px 20px rgba(127,119,221,.32);">Next: Strategy →</a>
+</nav>
+</body>
+</html>

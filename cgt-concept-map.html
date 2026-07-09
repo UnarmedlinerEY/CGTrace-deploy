@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>CGTrace — Jobs-to-be-Done Concept Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#FAF9FF; --surface:#FFFFFF; --surface2:#F4F2FE; --ink:#1C1540; --ink2:#2D2845;
+  --muted:#7A72B0; --muted2:#9088C0; --line:#D5CFEE; --line2:#E3DFF6;
+  --primary:#7F77DD; --primary-deep:#534AB7; --indigo:#1C1540; --indigo2:#231a52;
+  --teal:#7F77DD; --amber:#fb923c; --green:#34d399; --red:#f87171; --violet:#a78bfa; --grey:#9088C0;
+}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;font-weight:400;overflow:hidden;}
+.shell{display:flex;flex-direction:column;height:100vh;}
+
+/* header */
+.top{padding:20px 30px 16px;border-bottom:1px solid var(--line);flex:none;background:var(--surface);}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--primary-deep);margin-bottom:9px;display:flex;align-items:center;gap:12px;}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--line);}
+.top h1{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:.02em;line-height:1;color:var(--ink);}
+.top h1 em{font-style:normal;font-size:.82em;color:var(--primary);text-transform:none;letter-spacing:0;}
+.top p{font-size:13px;color:var(--ink2);max-width:780px;margin-top:7px;line-height:1.6;}
+.top p b{color:var(--ink);font-weight:600;}
+
+/* legend + controls bar */
+.bar{display:flex;align-items:center;gap:18px;padding:11px 30px;border-bottom:1px solid var(--line);flex:none;flex-wrap:wrap;background:var(--surface2);}
+.legend{display:flex;gap:14px;flex-wrap:wrap;}
+.lg{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.lg i{width:9px;height:9px;border-radius:2px;display:inline-block;}
+.hint{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--primary-deep);margin-left:auto;display:flex;align-items:center;gap:8px;}
+.hint .dot{width:6px;height:6px;border-radius:50%;background:var(--primary);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.zoom{display:flex;gap:6px;}
+.zbtn{width:28px;height:28px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;cursor:pointer;font-size:14px;font-family:'IBM Plex Mono',monospace;line-height:1;display:flex;align-items:center;justify-content:center;transition:border-color .15s;}
+.zbtn:hover{border-color:var(--primary);}
+.zbtn.wide{width:auto;padding:0 11px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;}
+
+/* stage */
+.stage{position:relative;flex:1;overflow:hidden;cursor:grab;background:var(--bg);
+  background-image:radial-gradient(var(--line) 1px, transparent 1px);
+  background-size:26px 26px;}
+.stage.grabbing{cursor:grabbing;}
+.canvas{position:absolute;top:0;left:0;width:1480px;height:1960px;transform-origin:0 0;}
+svg.links{position:absolute;top:0;left:0;width:1480px;height:1960px;overflow:visible;pointer-events:none;}
+.link{fill:none;stroke:rgba(83,74,183,.2);stroke-width:1.4;transition:stroke .25s,stroke-width .25s,opacity .25s;}
+.spine{fill:none;stroke:var(--amber);stroke-width:2.4;opacity:.6;}
+.canvas.focusing .link{opacity:.08;}
+.canvas.focusing .link.lit{opacity:1;stroke-width:2.2;}
+
+/* nodes */
+.node{position:absolute;transform:translate(-50%,-50%);}
+.problem{width:560px;}
+.pcard{background:var(--surface);border:1.5px solid var(--amber);border-radius:14px;padding:18px 22px;box-shadow:0 6px 22px rgba(28,21,64,.08);}
+.pcard .k{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#c2700f;margin-bottom:8px;}
+.pcard p{font-style:italic;font-size:18px;line-height:1.4;color:var(--ink);}
+
+.jtbd{width:320px;cursor:pointer;}
+.jcard{background:var(--indigo);color:#fff;border-radius:12px;padding:14px 16px;border:2px solid transparent;box-shadow:0 8px 22px rgba(28,21,64,.28);transition:transform .15s,box-shadow .15s,border-color .15s;position:relative;}
+.jtbd:hover .jcard{transform:translateY(-2px);box-shadow:0 12px 30px rgba(28,21,64,.4);}
+.jcard::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:3px;background:var(--primary);}
+.jcard .jk{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--violet);margin-bottom:5px;padding-left:10px;}
+.jcard h3{font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:.02em;line-height:1;margin-bottom:6px;padding-left:10px;color:#fff;}
+.jcard p{font-size:12px;line-height:1.45;color:#CFC9EE;padding-left:10px;}
+.jtbd.active .jcard{border-color:var(--primary);box-shadow:0 0 0 4px rgba(127,119,221,.3),0 12px 30px rgba(28,21,64,.4);}
+.canvas.focusing .jtbd:not(.active){opacity:.35;}
+
+.mod{width:228px;}
+.mcard{background:var(--surface);border:1px solid var(--line);border-top-width:2px;border-radius:10px;padding:12px 14px;box-shadow:0 3px 12px rgba(28,21,64,.06);transition:opacity .25s,box-shadow .25s,border-color .25s,transform .15s;}
+.mcard:hover{transform:translateY(-2px);border-color:var(--primary);}
+.mod[data-c="violet"] .mcard{border-top-color:var(--violet);}
+.mod[data-c="amber"]  .mcard{border-top-color:var(--amber);}
+.mod[data-c="red"]    .mcard{border-top-color:var(--red);}
+.mod[data-c="teal"]   .mcard{border-top-color:var(--teal);}
+.mod[data-c="grey"]   .mcard{border-top-color:var(--grey);}
+.mcard .lab{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:5px;}
+.mcard h4{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;line-height:1.25;}
+.mcard .contract{font-size:10.5px;line-height:1.5;color:var(--ink2);}
+.canvas.focusing .mod:not(.lit) .mcard{opacity:.18;}
+.mod.lit .mcard{box-shadow:0 0 0 1px var(--primary),0 8px 24px rgba(28,21,64,.16);}
+
+/* detail panel */
+.detail{position:absolute;left:24px;bottom:24px;width:340px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--primary);border-radius:12px;padding:18px 20px;box-shadow:0 16px 50px rgba(28,21,64,.22);display:none;}
+.detail.show{display:block;}
+.detail .dk{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--primary-deep);margin-bottom:7px;}
+.detail h3{font-style:italic;font-size:16.5px;line-height:1.35;color:var(--ink);margin-bottom:12px;}
+.detail .seg{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.detail .mods{font-size:12px;color:var(--ink2);line-height:1.55;margin-bottom:12px;}
+.detail .metric{padding-top:10px;border-top:1px dashed var(--line);font-family:'IBM Plex Mono',monospace;font-size:10px;color:#0f9e6e;line-height:1.5;}
+.detail .metric span{color:var(--muted);}
+.detail .close{position:absolute;top:12px;right:14px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);cursor:pointer;letter-spacing:.1em;}
+.detail .close:hover{color:var(--ink);}
+
+/* tooltip */
+.tip{position:fixed;z-index:999;display:none;background:var(--indigo);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:11px 13px;max-width:250px;box-shadow:0 12px 36px rgba(28,21,64,.4);pointer-events:none;}
+.tip.vis{display:block;}
+.tip .tn{font-size:12.5px;font-weight:600;color:#fff;margin-bottom:3px;}
+.tip .tc{font-size:11px;line-height:1.55;color:#CFC9EE;}
+.tip .tj{margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--violet);}
+
+.foot{flex:none;padding:8px 30px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted2);flex-wrap:wrap;gap:6px;background:var(--surface);}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="top">
+    <div class="eyebrow">CGTrace · Functional Design ▸ <span style="color:var(--muted)">Jobs-to-be-Done Concept Map</span></div>
+    <h1>THE SPINE IS THE <em>customer</em>. THE BRANCHES ARE THE PRODUCT.</h1>
+    <p>The centre spine holds the core problem and the five <b>jobs the firm is hiring CGTrace to do</b>. Every functional module branches off the job it serves — <b>no module exists without a job above it.</b> Click a job to light its modules; drag to pan, scroll to zoom.</p>
+  </div>
+
+  <div class="bar">
+    <div class="legend">
+      <span class="lg"><i style="background:var(--amber)"></i>Job-to-be-done</span>
+      <span class="lg"><i style="background:var(--violet)"></i>Experience</span>
+      <span class="lg"><i style="background:var(--amber)"></i>Domain engine</span>
+      <span class="lg"><i style="background:var(--red)"></i>Compliance</span>
+      <span class="lg"><i style="background:var(--teal)"></i>Data</span>
+      <span class="lg"><i style="background:var(--grey)"></i>Platform</span>
+    </div>
+    <div class="zoom">
+      <button class="zbtn" id="zout">–</button>
+      <button class="zbtn" id="zin">+</button>
+      <button class="zbtn wide" id="zfit">Fit</button>
+    </div>
+    <div class="hint"><span class="dot"></span>Click a job-to-be-done</div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="canvas" id="canvas">
+      <svg class="links" id="links"></svg>
+      <!-- nodes injected by JS -->
+    </div>
+    <div class="detail" id="detail">
+      <span class="close" id="dclose">✕ clear</span>
+      <div class="dk" id="d-k"></div>
+      <h3 id="d-job"></h3>
+      <div class="seg">Modules that deliver it</div>
+      <div class="mods" id="d-mods"></div>
+      <div class="metric" id="d-metric"></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>CGTRACE · JOBS-TO-BE-DONE → MODULE MAP</span>
+    <span>JUNE 2026 · INTERVIEW ARTEFACT · GENERAL IN NATURE</span>
+  </div>
+</div>
+
+<div class="tip" id="tip"><div class="tn" id="tip-n"></div><div class="tc" id="tip-c"></div><div class="tj" id="tip-j"></div></div>
+
+<script>
+(function(){
+  var W=1480, H=1960, CX=740;
+
+  // ---- data ----
+  var PROBLEM = {cx:CX, cy:92,
+    text:"Australian accounting firms can’t produce defensible CGT outcomes for clients with share &amp; ETF portfolios — without hours of unbillable manual reconstruction."};
+
+  var JOBS = [
+    {id:"j1", cx:CX, cy:330, k:"Job 01", title:"Reconstruct, don’t rebuild",
+     job:"When a client’s parcel history is missing or messy, rebuild it fast — so I stop writing off billable hours.",
+     metric:"3 hrs → <span>under</span> 10 min per DRP history · break-even at 19 min saved / client / yr",
+     mods:["register","ledger","action","reconwf"]},
+    {id:"j2", cx:CX, cy:600, k:"Job 02", title:"Prove every number",
+     job:"When the ATO or a client asks where a figure came from, let me prove it instantly — so the number is defensible.",
+     metric:"Zero ATO-disputed outputs in year one · <span>trust is binary in a community that talks</span>",
+     mods:["audit","obs","report","ledger"]},
+    {id:"j3", cx:CX, cy:870, k:"Job 03", title:"Apply the right law",
+     job:"When I process a corporate action, apply the statutorily-correct treatment — so cost base and dates are right.",
+     metric:"100% of 14 origin types validated to primary legislation · BSP ≠ DRP",
+     mods:["rules","cgt","action"]},
+    {id:"j4", cx:CX, cy:1400, k:"Job 04", title:"Triage the firm",
+     job:"When I’m accountable for 60 clients, show me who needs attention without opening each file — so nothing slips.",
+     metric:"50 firms × 10+ portfolios in year one · <span>the whitespace nobody occupies</span>",
+     mods:["firm","tenant","api","pmsync","advisory","autopilot"]},
+    {id:"j5", cx:CX, cy:1800, k:"Job 05", title:"Source the un-fed data",
+     job:"When AMIT or class-ruling data isn’t in any feed, give it to me at the point of entry — so silent errors don’t compound.",
+     metric:"60%+ of firms process a corporate action in-tool · <span>the retention signal</span>",
+     mods:["refdata","gateway","wizard"]}
+  ];
+
+  var MODS = {
+    register:{cx:1290,cy:280,c:"violet",lab:"Experience",name:"Parcel Register",contract:"Living per-client register across 14 origin types; a projection of the event ledger."},
+    ledger:  {cx:1290,cy:430,c:"teal",  lab:"Data",      name:"Parcel Event Ledger",contract:"Event-sourced source of truth — state derived by replay, so any figure is reproducible."},
+    action:  {cx:190, cy:380,c:"amber", lab:"Domain engine",name:"Corporate Action Engine",contract:"14 origin types. Bonus parcels inherit source acquisition date and apportioned cost base."},
+    audit:   {cx:190, cy:560,c:"red",   lab:"Compliance", name:"Audit Trail Service",contract:"Append-only, hash-chained derivation of every figure. The requirement, not a log file."},
+    obs:     {cx:190, cy:700,c:"grey",  lab:"Platform",   name:"Versioning & Provenance",contract:"Every output stamped with engine + ruleset version. Disputes reproducible by design."},
+    report:  {cx:1290,cy:600,c:"violet",lab:"Experience", name:"Report Studio",contract:"Verdict-first gain/loss report; one-click ATO audit bundle with every source attached."},
+    rules:   {cx:1290,cy:810,c:"amber", lab:"Domain engine",name:"Tax Rules Engine",contract:"Statute-versioned rules-as-data; new legislation ships as a dated ruleset, not a rewrite."},
+    cgt:     {cx:1290,cy:960,c:"amber", lab:"Domain engine",name:"CGT Calculation Engine",contract:"Event recognition (A1/C2/G1…), discount vs indexation, ATO-order loss sequencing."},
+    reconwf: {cx:190, cy:220, c:"violet",lab:"Experience", name:"Reconciliation Workflow",contract:"Five-stage locked period — reconcile inputs, review parcels and corp. actions, resolve CGT events, generate report, mark reconciled — with rollback if something's wrong."},
+    firm:    {cx:190, cy:1340,c:"violet",lab:"Experience", name:"Firm Workspace",contract:"Multi-client triage — surfaces clients with unprocessed actions, sorted by exposure."},
+    tenant:  {cx:190, cy:1480,c:"grey", lab:"Platform",    name:"Multi-tenant Security",contract:"Per-firm row-level isolation; principal / preparer / reviewer roles."},
+    pmsync:  {cx:190, cy:1190,c:"grey", lab:"Platform",    name:"Practice-Manager Sync",contract:"Reads client / job / return context from Xero Practice Manager (MYOB AE/AO togglable); writes the CGT figure straight back. No duplicate entry."},
+    api:     {cx:1290,cy:1400,c:"grey", lab:"Platform",    name:"API-first Surface",contract:"One public contract for app, exports and future feeds — the SPA is just another client."},
+    advisory:{cx:1290,cy:1250,c:"violet",lab:"Experience", name:"Advisory Partner Dashboard",contract:"Paid add-on tier: group-level vitals, an opportunity ranker, and a scoped-engagement upsell flow — for firms pivoting to advisory."},
+    autopilot:{cx:1290,cy:1600,c:"violet",lab:"Experience",name:"Autopilot Briefing",contract:"Toggle that flips the AI proactive — surfaces what's outstanding before being asked. Scripted prototype, two scenarios live."},
+    refdata: {cx:1290,cy:1730,c:"teal", lab:"Data",        name:"Reference Data Hub",contract:"CPI series, ATO class-ruling register, AMMA records — curated and human-verified."},
+    gateway: {cx:1290,cy:1870,c:"teal", lab:"Data",        name:"Market Data Gateway",contract:"Phased: pricing APIs → registry feeds → broker feeds. Reconciliation is the moat."},
+    wizard:  {cx:190, cy:1800,c:"violet",lab:"Experience",  name:"Action Wizard",contract:"Guided, registry-pre-filled entry; governing statute cited inline; preview before commit."}
+  };
+
+  // reverse index: module -> jobs
+  var modJobs={};
+  JOBS.forEach(function(j){ j.mods.forEach(function(m){ (modJobs[m]=modJobs[m]||[]).push(j.title); }); });
+
+  var canvas=document.getElementById('canvas');
+  var svg=document.getElementById('links');
+
+  // ---- build nodes ----
+  function place(el,cx,cy){ el.style.left=cx+'px'; el.style.top=cy+'px'; }
+
+  // problem
+  var pn=document.createElement('div'); pn.className='node problem';
+  pn.innerHTML='<div class="pcard"><div class="k">The core problem</div><p>'+PROBLEM.text+'</p></div>';
+  place(pn,PROBLEM.cx,PROBLEM.cy); canvas.appendChild(pn);
+
+  // jobs
+  JOBS.forEach(function(j){
+    var n=document.createElement('div'); n.className='node jtbd'; n.dataset.id=j.id;
+    n.innerHTML='<div class="jcard"><div class="jk">'+j.k+'</div><h3>'+j.title+'</h3><p>'+j.job+'</p></div>';
+    place(n,j.cx,j.cy); canvas.appendChild(n); j.el=n;
+    n.addEventListener('click',function(e){ e.stopPropagation(); toggleJob(j); });
+  });
+
+  // modules
+  Object.keys(MODS).forEach(function(id){
+    var m=MODS[id]; var n=document.createElement('div'); n.className='node mod'; n.dataset.id=id; n.dataset.c=m.c;
+    n.innerHTML='<div class="mcard"><div class="lab">'+m.lab+'</div><h4>'+m.name+'</h4><div class="contract">'+m.contract+'</div></div>';
+    place(n,m.cx,m.cy); canvas.appendChild(n); m.el=n;
+    n.addEventListener('mouseenter',function(e){ showTip(e,m,id); });
+    n.addEventListener('mousemove',moveTip);
+    n.addEventListener('mouseleave',hideTip);
+  });
+
+  // ---- connectors ----
+  var NS='http://www.w3.org/2000/svg';
+  // spine
+  var sp=document.createElementNS(NS,'path'); sp.setAttribute('class','spine');
+  sp.setAttribute('d','M '+CX+' '+(PROBLEM.cy+58)+' L '+CX+' '+(JOBS[JOBS.length-1].cy));
+  svg.appendChild(sp);
+
+  var linkEls=[];
+  JOBS.forEach(function(j){
+    j.mods.forEach(function(mid){
+      var m=MODS[mid];
+      var jHalf=160, mHalf=114;
+      var fromX, toX, cp1, cp2;
+      if(m.cx < j.cx){ // module on left
+        fromX=j.cx-jHalf; toX=m.cx+mHalf; cp1=fromX-130; cp2=toX+130;
+      } else { // right
+        fromX=j.cx+jHalf; toX=m.cx-mHalf; cp1=fromX+130; cp2=toX-130;
+      }
+      var d='M '+fromX+' '+j.cy+' C '+cp1+' '+j.cy+' '+cp2+' '+m.cy+' '+toX+' '+m.cy;
+      var p=document.createElementNS(NS,'path'); p.setAttribute('class','link');
+      p.setAttribute('d',d);
+      var col=getComputedStyle(document.documentElement).getPropertyValue('--'+m.c).trim();
+      p.dataset.job=j.id; p.dataset.col=col;
+      svg.appendChild(p); linkEls.push(p);
+    });
+  });
+
+  // ---- focus logic ----
+  var detail=document.getElementById('detail'), activeJob=null;
+  function clearFocus(){
+    activeJob=null; canvas.classList.remove('focusing');
+    JOBS.forEach(function(j){ j.el.classList.remove('active'); });
+    Object.keys(MODS).forEach(function(id){ MODS[id].el.classList.remove('lit'); });
+    linkEls.forEach(function(p){ p.classList.remove('lit'); p.style.stroke=''; });
+    detail.classList.remove('show');
+  }
+  function toggleJob(j){
+    if(activeJob===j.id){ clearFocus(); return; }
+    clearFocus(); activeJob=j.id; canvas.classList.add('focusing');
+    j.el.classList.add('active');
+    j.mods.forEach(function(mid){ MODS[mid].el.classList.add('lit'); });
+    linkEls.forEach(function(p){ if(p.dataset.job===j.id){ p.classList.add('lit'); p.style.stroke=p.dataset.col; } });
+    document.getElementById('d-k').textContent=j.k;
+    document.getElementById('d-job').textContent=j.job;
+    document.getElementById('d-mods').innerHTML=j.mods.map(function(mid){return MODS[mid].name;}).join(' &middot; ');
+    document.getElementById('d-metric').innerHTML='Success metric — '+j.metric;
+    detail.classList.add('show');
+  }
+  document.getElementById('dclose').addEventListener('click',clearFocus);
+
+  // ---- tooltip ----
+  var tip=document.getElementById('tip');
+  function showTip(e,m,id){
+    document.getElementById('tip-n').textContent=m.name;
+    document.getElementById('tip-c').textContent=m.contract;
+    document.getElementById('tip-j').textContent='Serves: '+(modJobs[id]||[]).join(' · ');
+    tip.classList.add('vis'); moveTip(e);
+  }
+  function moveTip(e){
+    var pad=14,tw=tip.offsetWidth,th=tip.offsetHeight,x=e.clientX+pad,y=e.clientY+pad;
+    if(x+tw>window.innerWidth-pad)x=e.clientX-tw-pad;
+    if(y+th>window.innerHeight-pad)y=e.clientY-th-pad;
+    tip.style.left=x+'px'; tip.style.top=y+'px';
+  }
+  function hideTip(){ tip.classList.remove('vis'); }
+
+  // ---- pan & zoom ----
+  var stage=document.getElementById('stage');
+  var scale=1, tx=0, ty=0;
+  function apply(){ canvas.style.transform='translate('+tx+'px,'+ty+'px) scale('+scale+')'; }
+  function fit(){
+    var rect=stage.getBoundingClientRect();
+    scale=Math.min(rect.width/W, rect.height/H);
+    tx=(rect.width - W*scale)/2; ty=12; apply();
+  }
+  document.getElementById('zin').addEventListener('click',function(){ zoomAt(stage.getBoundingClientRect().width/2, stage.getBoundingClientRect().height/2, 1.2); });
+  document.getElementById('zout').addEventListener('click',function(){ zoomAt(stage.getBoundingClientRect().width/2, stage.getBoundingClientRect().height/2, 1/1.2); });
+  document.getElementById('zfit').addEventListener('click',fit);
+  function zoomAt(px,py,f){
+    var ns=Math.max(0.25,Math.min(2.2,scale*f));
+    var rect=stage.getBoundingClientRect();
+    var cxp=px-rect.left, cyp=py-rect.top;
+    tx = cxp - (cxp - tx)*(ns/scale);
+    ty = cyp - (cyp - ty)*(ns/scale);
+    scale=ns; apply();
+  }
+  stage.addEventListener('wheel',function(e){ e.preventDefault(); zoomAt(e.clientX,e.clientY, e.deltaY<0?1.1:1/1.1); },{passive:false});
+
+  var dragging=false,sx,sy,stx,sty;
+  stage.addEventListener('pointerdown',function(e){
+    if(e.target.closest('.node')||e.target.closest('.detail'))return;
+    dragging=true; stage.classList.add('grabbing'); sx=e.clientX; sy=e.clientY; stx=tx; sty=ty;
+    stage.setPointerCapture(e.pointerId);
+  });
+  stage.addEventListener('pointermove',function(e){
+    if(!dragging)return; tx=stx+(e.clientX-sx); ty=sty+(e.clientY-sy); apply();
+  });
+  stage.addEventListener('pointerup',function(e){ dragging=false; stage.classList.remove('grabbing'); });
+  stage.addEventListener('click',function(e){ if(!e.target.closest('.node')&&!e.target.closest('.detail')) clearFocus(); });
+
+  window.addEventListener('resize',fit);
+  fit();
+})();
+</script>
+<nav style="position:fixed;right:20px;bottom:20px;display:flex;gap:8px;z-index:2000;font-family:'IBM Plex Mono',monospace;">
+  <a href="cgt-portfolio-hub.html" style="padding:9px 15px;border-radius:99px;text-decoration:none;font-size:11px;letter-spacing:.04em;border:1px solid #D5CFEE;background:#FFFFFF;color:#534AB7;box-shadow:0 6px 20px rgba(28,21,64,.18);">← Hub</a>
+  <a href="cgt-pricing.html" style="padding:9px 15px;border-radius:99px;text-decoration:none;font-size:11px;letter-spacing:.04em;border:1px solid #7F77DD;background:#7F77DD;color:#fff;box-shadow:0 6px 20px rgba(127,119,221,.32);">Next: Pricing →</a>
+</nav>
+</body>
+</html>
+  
