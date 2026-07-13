@@ -28,7 +28,7 @@
   - Rulesets: bill-2026 (Tax Reform (No. 1) Bill 2026 — PENDING, introduced
     28 May 2026, Senate committee report due 22 Jun 2026) and current-law (CONFIRMED).
 
-  Interview artefact · general in nature · not tax advice.
+  Portfolio artefact · general in nature · not tax advice.
   ═══════════════════════════════════════════════════════════════════════════
 -->
 <html lang="en">
@@ -7165,7 +7165,7 @@ function LawsEngineView() {
 // ── #/case-study — Phase 4 placeholder ──
 // ═══════════════════════════════════════════════════════════════════════════════
 // CASE STUDY (Phase 4) — 4 navigable sections distilling the PM/PO dossier.
-// Interview artefact · general in nature · not a real company.
+// Portfolio artefact · general in nature · not a real company.
 // ═══════════════════════════════════════════════════════════════════════════════
 function CSCard({ title, color, children, accent }) {
   return (
@@ -7196,7 +7196,7 @@ function CaseStudyView() {
           <div style={{ fontSize:9, letterSpacing:"0.18em", textTransform:"uppercase", color:CD.muted, fontFamily:"'IBM Plex Mono',monospace", marginBottom:6 }}>CGTrace · PM/PO case study</div>
           <div style={{ fontSize:24, fontWeight:700, color:CD.text, letterSpacing:"-0.02em", marginBottom:6 }}>Reconstructing CGT history at accounting-firm scale</div>
           <div style={{ fontSize:13, color:CD.dim, lineHeight:1.6, maxWidth:760 }}>
-            How a structurally underserved segment, a 2026 legislative shock, and an AI-assisted reconciliation engine combine into a defensible product. This walkthrough is an interview artefact — general in nature, not a real company, not tax advice.
+            How a structurally underserved segment, a 2026 legislative shock, and an AI-assisted reconciliation engine combine into a defensible product. This walkthrough is a portfolio artefact — general in nature, not a real company, not tax advice.
           </div>
         </div>
       </div>
@@ -7592,7 +7592,7 @@ function GuidedTour({ onClose, startAt, clients, setAutopilot, setCpBriefDismiss
       close: () => setSettingsOpen(false),
       body:"The avatar top-right is where Settings, User access control, Customer support and the Activity log (Autopilot's audit trail) live — we've opened Settings for you: broker API keys, the accounting-software connection that powers PM sync, and security. Mock content for this demo, wired for the shape of the real thing." },
     { route:"/clients",   title:"11 · Behind the build", external:"cgt-portfolio-hub.html", body:"The PM/PO portfolio hub: seven chapters tracing this product from raw market discovery through positioning, prioritisation, design, pricing, roadmap and delivery. Opens in a new tab — come back here when you're done." },
-    { route:"/clients",   title:"That's the tour", body:"Explore freely from here. Reminder: CGTrace is an interview artefact — general modelling only, not tax advice." },
+    { route:"/clients",   title:"That's the tour", body:"Explore freely from here. Reminder: CGTrace is a portfolio artefact — general modelling only, not tax advice." },
   ];
   const [i, setI] = useState(() => Math.min(Math.max(startAt || 0, 0), STEPS.length - 1));
   const step = STEPS[i];
@@ -9905,8 +9905,8 @@ function PartnerDashboardView({ clients, holdings, pm, onOpenClient, autopilot, 
 // APP ROOT — hash-routed
 // ═══════════════════════════════════════════════════════════════════════════════
 // ═══════════════════════════════════════════════════════════════════════════════
-// WELCOME / VISITOR ROUTER — first-load gate for an evaluator (recruiter / hiring
-// manager), NOT the accountant end-user. Two screens: (1) who-this-is + disclaimer-
+// WELCOME / VISITOR ROUTER — first-load gate for a first-time visitor, NOT the
+// accountant end-user. Two screens: (1) who-this-is + disclaimer-
 // as-trust-signal + LinkedIn; (2) intent router — See the wow (AI agent, recommended)
 // / See the product (Compliance + Advisory) / See my thinking (PM-PO hub). Shows once
 // (localStorage gate), reopenable via the GlobalBar "About this demo" button.
@@ -10011,7 +10011,7 @@ function WelcomeModal({ onSkip, onTour, onCalc, onAI, onHub }) {
           <div>
             <div style={eyebrow}>Pick your path</div>
             <div style={{ fontSize:17, fontWeight:700, color:"#EEEDFE", letterSpacing:"-0.02em", margin:"7px 0 16px" }}>
-              How do you want to evaluate this?
+              Where do you want to start?
             </div>
 
             <div style={{ display:"grid", gap:11 }}>
