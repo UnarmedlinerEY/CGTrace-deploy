@@ -36,6 +36,8 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',system-ui
 .spine-strip{background:var(--surface);border-bottom:1px solid var(--line);padding:30px 56px;}
 .spine-inner{max-width:1060px;margin:0 auto;}
 .spine-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.spine-caption{font-size:12px;color:var(--muted);line-height:1.5;margin-top:14px;}
+.spine-caption::before{content:"";display:inline-block;width:9px;height:9px;border-radius:99px;background:rgba(127,119,221,.1);border:1px solid var(--primary);margin-right:8px;vertical-align:baseline;}
 .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .flow .step{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink2);padding:7px 12px;border:1px solid var(--line);border-radius:99px;white-space:nowrap;background:var(--surface);}
 .flow .step.key{border-color:var(--primary);color:var(--primary-deep);background:rgba(127,119,221,.1);font-weight:500;}
@@ -115,6 +117,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',system-ui
       <span class="step">Strategy</span><span class="arr">→</span>
       <span class="step">Delivery</span>
     </div>
+    <div class="spine-caption">Lit = the two load-bearing moves the whole line pivots on — proof, then design.</div>
   </div>
 </div>
 
